@@ -126,7 +126,7 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
         except evo2.InvalidSchedule:
             pass
         else:
-            assert False
+            pytest.fail("Expected InvalidSchedule exception")
 
 
 async def _test_status_apis(evo: evo2.EvohomeClient) -> None:
