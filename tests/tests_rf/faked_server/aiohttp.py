@@ -31,7 +31,7 @@ class StreamReader(asyncio.StreamReader):
 
     _buffer = bytearray()
 
-    def __init__(self, limit=_DEFAULT_LIMIT, loop=None):
+    def __init__(self, limit=_DEFAULT_LIMIT, loop=None) -> None:
         pass
 
     async def read(self, n: int = -1) -> bytes:

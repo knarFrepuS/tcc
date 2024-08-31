@@ -152,6 +152,7 @@
 
 [tool.ruff.lint]
   select = [
+    "ANN",  #   flake8-annotations
     "ASYNC",  # flake8-async
     "B",  #     flake8-bugbear
     "E",  #     pycodestyle
@@ -168,7 +169,7 @@
     "UP",  #    pyupgrade
   ]
 
-  ignore = ["B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"]
+  ignore = ["ANN001", "ANN002", "ANN003", "ANN101", "ANN401", "B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"]
   # B011   - Do not call assert False since python -O removes these calls
   # E501   - Line too long
   # G004   - Logging statement uses f-string
