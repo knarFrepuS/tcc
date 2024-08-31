@@ -93,10 +93,10 @@ def broker_get(install: str) -> Callable:
         if "userAccount" in url:  # EvohomeClient.user_account
             return SCH_USER_ACCOUNT(user_account_fixture(install))  # type: ignore[no-any-return]
 
-        elif "installationInfo" in url:  # EvohomeClient._installation
+        if "installationInfo" in url:  # EvohomeClient._installation
             return SCH_FULL_CONFIG(user_locations_config_fixture(install))  # type: ignore[no-any-return]
 
-        elif "status" in url:  # Location.refresh_status
+        if "status" in url:  # Location.refresh_status
             return SCH_LOCN_STATUS(location_status_fixture(install, url.split("/")[1]))  # type: ignore[no-any-return]
 
         pytest.fail(f"Unexpected/unknown URL: {url}")
