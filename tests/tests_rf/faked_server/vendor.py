@@ -297,22 +297,16 @@ class FakedServer:
 
 
 REQUEST_MAP: dict[str, Callable] = {
-    #
     r"/Auth/OAuth/Token": FakedServer.oauth_token,
-    #
     r"/userAccount$": FakedServer.usr_account,
     r"/location/installationInfo": FakedServer.all_config,
-    #
     r"/location/.*/installationInfo": FakedServer.loc_config,
     r"/location/.*/status": FakedServer.loc_status,
-    #
     r"/temperatureControlSystem/.*/mode": FakedServer.tcs_mode,
     r"/temperatureControlSystem/.*/status": FakedServer.tcs_status,
-    #
     r"/temperatureZone/.*/status": FakedServer.zon_status,
     r"/temperatureZone/.*/heatSetpoint": FakedServer.zon_mode,
     r"/temperatureZone/.*/schedule": FakedServer.zon_schedule,
-    #
     r"/domesticHotWater/.*/status": FakedServer.dhw_status,
     r"/domesticHotWater/.*/state": FakedServer.dhw_mode,
     r"/domesticHotWater/.*/schedule": FakedServer.dhw_schedule,

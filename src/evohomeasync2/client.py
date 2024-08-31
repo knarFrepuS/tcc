@@ -129,8 +129,8 @@ class TokenManager(AbstractTokenManager):
         self._token_data_reset()
 
         try:
-            async with aiofiles.open(self._token_cache) as fp:
-                content = await fp.read()
+            async with aiofiles.open(self._token_cache) as f:
+                content = await f.read()
         except FileNotFoundError:
             return
 
@@ -144,8 +144,8 @@ class TokenManager(AbstractTokenManager):
         """Dump the tokens to a cache (temporary file)."""
 
         try:
-            async with aiofiles.open(self._token_cache) as fp:
-                content = await fp.read()
+            async with aiofiles.open(self._token_cache) as f:
+                content = await f.read()
         except FileNotFoundError:
             content = "{}"
 
@@ -165,8 +165,8 @@ class TokenManager(AbstractTokenManager):
             token_cache | {self.username: self._token_data_as_dict()}, indent=4
         )
 
-        async with aiofiles.open(self._token_cache, "w") as fp:
-            await fp.write(content)
+        async with aiofiles.open(self._token_cache, "w") as f:
+            await f.write(content)
 
 
 @click.group()
@@ -358,8 +358,8 @@ async def set_schedules(
     evo: EvohomeClient = ctx.obj[SZ_EVO]
 
     # will TypeError if filename is sys.stdin
-    async with aiofiles.open(filename, "r") as fp:  # type: ignore[call-overload]
-        content = await fp.read()
+    async with aiofiles.open(filename, "r") as f:  # type: ignore[call-overload]
+        content = await f.read()
 
     success = await _get_tcs(evo, loc_idx).set_schedules(json.loads(content))
 

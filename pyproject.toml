@@ -182,7 +182,7 @@
 #   "PERF",  #  perflint
     "PGH",  #   pygrep hooks
     "PIE",  #   flake8-pie                       # desirable
-#   "PL",  #    pylint
+    "PL",  #    pylint
 #   "PT",  #    flake8-pytest-style              # desirable
     "PTH",  #   flake8-use-pathlib               # desirable
     "PYI",  #   flake8-pyi
@@ -227,6 +227,10 @@
   combine-as-imports = true
   force-sort-within-sections = false
   split-on-trailing-comma = false
+
+
+[tool.ruff.lint.pylint]
+  max-args = 5
 #
 ## coverage ##########################################################################
 

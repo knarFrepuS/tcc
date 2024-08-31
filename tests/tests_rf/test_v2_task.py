@@ -150,7 +150,7 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     }
     _ = await should_fail(
         evo, HTTPMethod.PUT, put_url, json=bad_mode, status=HTTPStatus.BAD_REQUEST
-    )  #
+    )
     # x = [{
     #     "code": "InvalidInput", "message": """
     #         Error converting value 'TemporaryOverride'

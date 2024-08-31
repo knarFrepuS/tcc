@@ -74,16 +74,12 @@ class SystemMode(StrEnum):
     HEATING_OFF: Final = SZ_HEATING_OFF
 
 
-#
 SZ_DHW_OFF: Final = "DHWOff"
 SZ_DHW_ON: Final = "DHWOn"
-#
 SZ_DOMESTIC_HOT_WATER: Final = "DOMESTIC_HOT_WATER"
 SZ_EMEA_ZONE: Final = "EMEA_ZONE"
-#
 SZ_HOLD: Final = "Hold"
 SZ_SCHEDULED: Final = "Scheduled"
 SZ_TEMPORARY: Final = "Temporary"
-#
 SZ_HEAT: Final = "Heat"
 SZ_OFF: Final = "Off"

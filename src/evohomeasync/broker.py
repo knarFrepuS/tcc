@@ -35,7 +35,7 @@ class Broker:
     _user_data: _UserDataT | dict[Never, Never]
     _full_data: list[_LocnDataT]
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         username: str,
         password: str,
@@ -128,7 +128,7 @@ class Broker:
     ) -> aiohttp.ClientResponse:
         """Perform an HTTP request, with an optional retry if re-authenticated."""
 
-        response: aiohttp.ClientResponse
+        r: aiohttp.ClientResponse
 
         if method == HTTPMethod.GET:
             func = self._session.get
@@ -139,42 +139,41 @@ class Broker:
 
         url_ = self.hostname + "/WebAPI/api/" + url
 
-        async with func(url_, json=data, headers=self._headers) as response:
-            response_text = await response.text()  # why cant I move this below the if?
+        async with func(url_, json=data, headers=self._headers) as r:
+            response_text = await r.text()  # why cant I move this below the if?
 
             # if 401/unauthorized, may need to refresh sessionId (expires in 15 mins?)
-            if response.status != HTTPStatus.UNAUTHORIZED or _dont_reauthenticate:
-                return response
+            if r.status != HTTPStatus.UNAUTHORIZED or _dont_reauthenticate:
+                return r
 
             # TODO: use response.content_type to determine whether to use .json()
             if "code" not in response_text:  # don't use .json() yet: may be plain text
-                return response
+                return r
 
-            response_json = await response.json()
+            response_json = await r.json()
             if response_json[0]["code"] != "Unauthorized":
-                return response
+                return r
 
             # NOTE: I cannot recall if this is needed, or if it causes a bug
-            # if SZ_SESSION_ID not in self._headers:  # no value trying to re-authenticate
-            #     return response  # ...because: the user credentials must be invalid
+            if SZ_SESSION_ID not in self._headers:  # useless trying to re-authenticate
+                return r  # ...because: the user credentials *must* be invalid
 
-            _LOGGER.debug(f"Session now expired/invalid ({self._session_id})...")
-            self._headers = {"content-type": "application/json"}  # remove the sessionId
+        _LOGGER.debug(f"Session now expired/invalid ({self._session_id})...")
+        self._headers = {"content-type": "application/json"}  # remove the sessionId
 
-            _, response = await self._populate_user_data()  # Get a fresh sessionId
-            assert self._session_id is not None  # mypy hint
+        _, response = await self._populate_user_data()  # get a fresh sessionId
+        assert self._session_id is not None  # mypy hint
 
-            _LOGGER.debug(f"... success: new sessionId = {self._session_id}")
-            self._headers[SZ_SESSION_ID] = self._session_id
+        _LOGGER.debug(f"... success: new sessionId = {self._session_id}")
+        self._headers[SZ_SESSION_ID] = self._session_id
 
-            if "session" in url_:  # retry not needed for /session
-                return response
-
-            # NOTE: this is a recursive call, used only after re-authenticating
-            response = await self._make_request(
-                method, url, data=data, _dont_reauthenticate=True
-            )
+        if "session" in url_:  # retry not needed for /session
             return response
+
+        # NOTE: this is a recursive call, used only after (success) re-authenticating
+        return await self._make_request(
+            method, url, data=data, _dont_reauthenticate=True
+        )
 
     async def make_request(
         self,

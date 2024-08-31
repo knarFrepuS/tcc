@@ -142,7 +142,6 @@ SCH_PUT_SCHEDULE: Final = vol.Schema(  # PUT /{self.TYPE}/{self._id}/schedule
 )
 
 
-#
 def convert_to_put_schedule(schedule: _EvoDictT) -> _EvoDictT:
     """Convert a schedule to the format used by our get/set_schedule() methods.
 

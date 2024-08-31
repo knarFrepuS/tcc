@@ -157,7 +157,7 @@ class ClientResponse:
         self.status = self._faked_server.status  # type: ignore[assignment]
 
     def raise_for_status(self) -> None:
-        if self.status >= 300:
+        if self.status >= 300:  # noqa: PLR2004
             raise ClientResponseError(
                 f"{self.method} {self.url}: {self.status}", status=self.status
             )

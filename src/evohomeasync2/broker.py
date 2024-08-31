@@ -213,15 +213,15 @@ class AbstractTokenManager(ABC):
         """Obtain an access token via the vendor's web API."""
 
         try:
-            async with self.websession.post(url, **kwargs) as response:
-                response.raise_for_status()
+            async with self.websession.post(url, **kwargs) as r:
+                r.raise_for_status()
 
-                return await response.json()  # type: ignore[no-any-return]
+                return await r.json()  # type: ignore[no-any-return]
 
         except aiohttp.ContentTypeError as err:
             # <title>Authorize error <h1>Authorization failed
             # <p>The authorization server have encoutered an error while processing...
-            content = await response.text()
+            content = await r.text()
             raise exc.AuthenticationFailedError(
                 f"Server response is not JSON: {HTTPMethod.POST} {AUTH_URL}: {content}"
             ) from err
@@ -262,15 +262,15 @@ class Broker:
         if not kwargs.get("headers"):
             kwargs["headers"] = await self._headers()
 
-        async with self._session.request(method, url, **kwargs) as response:
-            if not response.content_length:
+        async with self._session.request(method, url, **kwargs) as r:
+            if not r.content_length:
                 content = None
-            elif response.content_type == "application/json":
-                content = await response.json()
+            elif r.content_type == "application/json":
+                content = await r.json()
             else:  # assume "text/plain" or "text/html"
-                content = await response.text()
+                content = await r.text()
 
-            return content, response
+            return content, r
 
     async def request(
         self, method: HTTPMethod, url: str, /, **kwargs: Any

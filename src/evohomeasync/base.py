@@ -56,6 +56,8 @@ if TYPE_CHECKING:
     )
 
 
+_INVALID_TEMP = 128
+
 _LOGGER: Final = logging.getLogger(__name__.rpartition(".")[0])
 
 
@@ -181,7 +183,7 @@ class EvohomeClient(EvohomeClientDeprecated):
     user_info: _UserInfoT  # user_data[SZ_USER_INFO] only (i.e. *without* "sessionID")
     location_data: _LocnDataT  # of the first location (config and status) in list
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         username: str,
         password: str,
@@ -300,7 +302,7 @@ class EvohomeClient(EvohomeClientDeprecated):
                         SZ_THERMOSTAT: device[SZ_THERMOSTAT_MODEL_TYPE],
                         SZ_ID: device[SZ_DEVICE_ID],
                         SZ_NAME: device[SZ_NAME],
-                        SZ_TEMP: None if temp == 128 else temp,
+                        SZ_TEMP: None if temp == _INVALID_TEMP else temp,
                         SZ_SETPOINT: set_point,
                         SZ_STATUS: status,
                         SZ_MODE: values[SZ_MODE],

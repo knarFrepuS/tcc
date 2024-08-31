@@ -69,7 +69,6 @@ async def _test_all_config(evo: evo2.EvohomeClient) -> None:
     """Test /location/installationInfo?userId={userId}"""
 
     _ = await evo.user_account()
-    #
 
     url = f"location/installationInfo?userId={evo.account_info['userId']}"
     await should_work(evo, HTTPMethod.GET, url)
@@ -100,7 +99,6 @@ async def _test_loc_status(evo: evo2.EvohomeClient) -> None:
 
     _ = await evo._installation(refresh_status=False)
     loc = evo.locations[0]
-    #
 
     url = f"location/{loc.location_id}/status"
     _ = await should_work(evo, HTTPMethod.GET, url)
@@ -209,7 +207,6 @@ async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
             break
     else:
         pytest.skip("No available zones found")
-    #
 
     url = f"{zone.TYPE}/{zone._id}/status"
     _ = await should_work(evo, HTTPMethod.GET, url, schema=SCH_ZONE_STATUS)
@@ -261,7 +258,6 @@ async def _test_schedule(evo: evo2.EvohomeClient) -> None:
 
     _ = await evo.installation()
     zone = evo.locations[0]._gateways[0]._control_systems[0]._zones[0]
-    #
 
     if zone._id == faked.GHOST_ZONE_ID:
         url = f"{zone.TYPE}/{faked.GHOST_ZONE_ID}/schedule"

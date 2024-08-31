@@ -33,7 +33,7 @@ async def instantiate_client_v1(
 ) -> evo1.EvohomeClient:
     """Instantiate a client, and logon to the vendor API."""
 
-    global _global_session_id
+    global _global_session_id  # noqa: PLW0603
 
     # Instantiation, NOTE: No API calls invoked during instantiation
     evo = evo1.EvohomeClient(
@@ -50,7 +50,7 @@ async def instantiate_client_v1(
     return evo
 
 
-async def should_work_v1(
+async def should_work_v1(  # noqa: PLR0913
     evo: evo1.EvohomeClient,
     method: HTTPMethod,
     url: str,
@@ -82,7 +82,7 @@ async def should_work_v1(
     return schema(content) if schema else content
 
 
-async def should_fail_v1(
+async def should_fail_v1(  # noqa: PLR0913
     evo: evo1.EvohomeClient,
     method: HTTPMethod,
     url: str,
@@ -140,7 +140,7 @@ async def instantiate_client_v2(
 ) -> evo2.EvohomeClient:
     """Instantiate a client, and logon to the vendor API (cache any tokens)."""
 
-    global _global_token_manager
+    global _global_token_manager  # noqa: PLW0603
 
     if (
         not _global_token_manager
@@ -167,7 +167,7 @@ async def instantiate_client_v2(
     return evo
 
 
-async def should_work(
+async def should_work(  # noqa: PLR0913
     evo: evo2.EvohomeClient,
     method: HTTPMethod,
     url: str,
@@ -199,7 +199,7 @@ async def should_work(
     return schema(content) if schema else content
 
 
-async def should_fail(
+async def should_fail(  # noqa: PLR0913
     evo: evo2.EvohomeClient,
     method: HTTPMethod,
     url: str,
