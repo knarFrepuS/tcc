@@ -202,14 +202,18 @@
   ]
 
   ignore = [
-    "ANN101", "ANN401", "B011", "COM812", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"
+    "ANN101",
+    "ANN401",
+    "B011",  # Do not call assert False since python -O removes these calls
+    "COM812",
+    "G004",
+    "E501",  # Line too long
+    "EXE001",
+    "S101",
+    "SIM102",  # Use a single `if` statement instead of nested `if` statements
+    "SIM114",  # Combine `if` branches using logical `or` operator
+    "UP009",  #  UTF-8 encoding declaration is unnecessary
   ]
-  # B011   - Do not call assert False since python -O removes these calls
-  # E501   - Line too long
-  # G004   - Logging statement uses f-string
-  # SIM102 - Use a single `if` statement instead of nested `if` statements
-  # SIM114 - Combine `if` branches using logical `or` operator
-  # UP009  - UTF-8 encoding declaration is unnecessary
 
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
