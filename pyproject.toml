@@ -1,6 +1,5 @@
 #
-### project ##########################################################################
-# evohome-async, updated: 2024-06-24
+### evohome-async ####################################################################
 #
 
 [project]
@@ -161,6 +160,7 @@
     "I",  #     isort
     "LOG",  #   flake8-logging
     "PGH",  #   pygrep hooks
+    "RET",  #   flake8-return
     "SIM",  #   flake8-simplify
     "S",  #     flake8-bandit
     "UP",  #    pyupgrade
