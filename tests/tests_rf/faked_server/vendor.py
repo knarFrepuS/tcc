@@ -174,7 +174,7 @@ class FakedServer:
             self.status = HTTPStatus.METHOD_NOT_ALLOWED
             return {"message": "Method not allowed"}
 
-        elif self._url == f"{URL_BASE}/userAccount":
+        if self._url == f"{URL_BASE}/userAccount":
             return self._user_config
 
         self.status = HTTPStatus.NOT_FOUND
