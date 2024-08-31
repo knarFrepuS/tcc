@@ -3,16 +3,12 @@
 
 from __future__ import annotations
 
-import logging
-
 import pytest
 
 import evohomeasync as evohome
 
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
 from .helpers import instantiate_client_v1
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def _test_client_apis(evo: evohome.EvohomeClient) -> None:
@@ -31,7 +27,6 @@ async def _test_client_apis(evo: evohome.EvohomeClient) -> None:
     # for _ in range(3):
     #     await asyncio.sleep(5)
     #     _ = await evo.get_temperatures()
-    #     _LOGGER.warning("get_temperatures() OK")
 
 
 async def test_client_apis(

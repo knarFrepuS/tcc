@@ -4,26 +4,21 @@
 from __future__ import annotations
 
 import inspect
-import json
+import logging
 from pathlib import Path
-from typing import TYPE_CHECKING
-
-import pytest
-
-if TYPE_CHECKING:
-    import voluptuous as vol
 
 TEST_DIR = Path(__file__).resolve().parent
 
 
-def test_schema(folder: Path, schema: vol.Schema, file_name: str) -> None:
-    if not Path(folder).joinpath(file_name).is_file():
-        pytest.skip(f"No {file_name} in: {folder.name}")
+class ClientStub:
+    broker = None
+    _logger = logging.getLogger(__name__)
 
-    with open(Path(folder).joinpath(file_name)) as f:
-        data: dict = json.load(f)
 
-    _ = schema(data)
+class GatewayStub:
+    _broker = None
+    _logger = logging.getLogger(__name__)
+    location = None
 
 
 def get_property_methods(obj: object) -> list[str]:

@@ -5,9 +5,9 @@ from __future__ import annotations
 
 import json
 import logging
-import pathlib
 from datetime import datetime as dt
 from functools import lru_cache
+from pathlib import Path
 from typing import TYPE_CHECKING, Self
 
 import aiohttp
@@ -28,7 +28,7 @@ type JsonValueType = (
 type JsonArrayType = list[JsonValueType]
 type JsonObjectType = dict[str, JsonValueType]
 
-FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
+FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,9 +62,9 @@ def load_fixture(install: str, file_name: str) -> JsonArrayType | JsonObjectType
 
     try:
         try:
-            text = pathlib.Path(FIXTURES_DIR / install / file_name).read_text()
+            text = (FIXTURES_DIR / install / file_name).read_text()
         except FileNotFoundError:
-            text = pathlib.Path(FIXTURES_DIR / "default" / file_name).read_text()
+            text = (FIXTURES_DIR / "default" / file_name).read_text()
 
     except FileNotFoundError:
         pytest.xfail(f"Fixture file not found: {file_name}")

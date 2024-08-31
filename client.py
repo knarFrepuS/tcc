@@ -6,9 +6,9 @@ try:
     from evohomeasync2.client import main
 
 except ModuleNotFoundError:
-    import os
+    from pathlib import Path
 
-    sys.path.append(f"{os.path.dirname(__file__)}/src")
+    sys.path.append(f"{Path(__file__).parent(__file__)}/src")
 
     from evohomeasync2.client import main
 

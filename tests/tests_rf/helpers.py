@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 from http import HTTPMethod, HTTPStatus
 from typing import TYPE_CHECKING
 
@@ -19,8 +18,6 @@ from .conftest import _DBG_DISABLE_STRICT_ASSERTS, TOKEN_CACHE, aiohttp
 
 if TYPE_CHECKING:
     import voluptuous as vol
-
-_LOGGER = logging.getLogger(__name__)
 
 
 # version 1 helpers ###################################################################
@@ -275,10 +272,12 @@ async def wait_for_comm_task_v2(evo: evo2.EvohomeClient, task_id: str) -> bool |
     while True:
         response = await should_work(evo, HTTPMethod.GET, url)
         assert isinstance(response, dict | list), response
+
         if response["state"] == "Succeeded":  # type: ignore[call-overload]
             return True
+
         if response["state"] in ("Created", "Running"):  # type: ignore[call-overload]
             await asyncio.sleep(0.3)
             continue
-        # raise RuntimeError(f"Unexpected state: {response['state']}")
-        _LOGGER.warning(f"Unexpected state: {response['state']}")  # type: ignore[call-overload]
+
+        pytest.fail(f"Unexpected state: {response['state']}")  # type: ignore[call-overload]

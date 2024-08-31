@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """evohome-async - test config."""
 
-import logging
 import os
 import tempfile
 from collections.abc import AsyncGenerator
@@ -25,10 +24,7 @@ else:
     from .faked_server import aiohttp  # type: ignore[no-redef]
 
     # so we don't pollute a real token cache with fake tokens
-    TOKEN_CACHE: Final = Path(tempfile.gettempdir() + "/.evo-cache.tst")  # type: ignore[misc]
-
-
-_LOGGER = logging.getLogger(__name__)
+    TOKEN_CACHE: Final = Path(tempfile.gettempdir()) / ".evo-cache.tst"  # type: ignore[misc]
 
 
 #######################################################################################

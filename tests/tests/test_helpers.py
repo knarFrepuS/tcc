@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from evohomeasync2.schema.helpers import camel_case, pascal_case
 from evohomeasync2.schema.schedule import (
@@ -18,26 +17,13 @@ from evohomeasync2.schema.schedule import (
 
 from .helpers import TEST_DIR
 
-WORK_DIR = Path(f"{TEST_DIR}/schedules")
-
-
-# def pytest_generate_tests(metafunc: pytest.Metafunc):
-#     def id_fnc(folder_path: Path):
-#         return folder_path.name
-
-#     files = [
-#         f for f in Path(WORK_DIR).glob("*.json") if not f.name.startswith("_")
-#     ]
-#     metafunc.parametrize("path", sorted(files), ids=id_fnc)
+WORK_DIR = TEST_DIR / "schedules"
 
 
 def test_get_schedule_zon() -> None:
     """Convert a zone's get schedule to snake_case, and back again."""
 
-    # th = Path(f"{TEST_DIR}/systems_0/system_001/schedule_zone.json")
-    path = Path(f"{WORK_DIR}/schedule_zone_get.json")
-
-    with open(path) as f:
+    with (WORK_DIR / "schedule_zone_get.json").open() as f:
         get_schedule = json.load(f)
 
     assert get_schedule == SCH_GET_SCHEDULE_ZONE(get_schedule)
@@ -51,9 +37,7 @@ def test_get_schedule_zon() -> None:
 def test_get_schedule_dhw() -> None:
     """Convert a dhw's get schedule to snake_case, and back again."""
 
-    path = Path(f"{WORK_DIR}/schedule_dhw_get.json")
-
-    with open(path) as f:
+    with (WORK_DIR / "schedule_dhw_get.json").open() as f:
         get_schedule = json.load(f)
 
     assert get_schedule == SCH_GET_SCHEDULE_DHW(get_schedule)

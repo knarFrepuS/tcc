@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING, Any, Final
 
 import voluptuous as vol
 
-from .. import exceptions as exc
+from evohomeasync2 import exceptions as exc
+
 from .const import (
     DAYS_OF_WEEK,
     SZ_COOL_SETPOINT,

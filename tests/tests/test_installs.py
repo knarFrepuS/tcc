@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
@@ -22,7 +21,7 @@ if TYPE_CHECKING:
 def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
     folders = [
         p.name
-        for p in Path(FIXTURES_DIR).glob("*")
+        for p in FIXTURES_DIR.glob("*")
         if p.is_dir() and not p.name.startswith("_")
     ]
     metafunc.parametrize("install", sorted(folders))
