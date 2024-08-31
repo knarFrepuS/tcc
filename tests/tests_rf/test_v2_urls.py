@@ -196,8 +196,6 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
         content_type="text/html",  # exception to usual content-type
     )
 
-    pass
-
 
 async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
     """Test /temperatureZone/{zoneId}/heatSetpoint"""

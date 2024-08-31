@@ -54,7 +54,6 @@ class TokenManager(AbstractTokenManager):
 
     async def save_access_token(self) -> None:
         """Save the access token to the cache."""
-        pass
 
 
 @lru_cache

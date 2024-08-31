@@ -175,8 +175,10 @@
     "LOG",  #   flake8-logging
 #   "N",  #     pep8-naming
     "PGH",  #   pygrep hooks
+    "PIE",  #
 #   "PL",  #    pylint
 #   "PT",  #    flake8-pytest-style
+    "Q",  #     flake8-quotes
     "RET",  #   flake8-return
     "RSE",  #   flake8-raise
     "S",  #     flake8-bandit

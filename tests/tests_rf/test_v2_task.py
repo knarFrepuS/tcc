@@ -177,8 +177,6 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
         evo, HTTPMethod.GET, url_tsk, status=HTTPStatus.NOT_FOUND
     )  # [{"code": "CommTaskNotFound", "message": "Communication task not found."}]
 
-    pass
-
 
 #######################################################################################
 
