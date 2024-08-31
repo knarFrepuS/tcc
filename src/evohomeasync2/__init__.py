@@ -10,15 +10,15 @@ from .base import EvohomeClient  # noqa: F401
 from .broker import Broker  # noqa: F401
 from .controlsystem import ControlSystem  # noqa: F401
 from .exceptions import (  # noqa: F401
-    AuthenticationFailed,
+    AuthenticationFailedError,
     DeprecationError,
     EvohomeError,
-    InvalidParameter,
-    InvalidSchedule,
-    InvalidSchema,
+    InvalidParameterError,
+    InvalidScheduleError,
+    InvalidSchemaError,
     NoSingleTcsError,
-    RateLimitExceeded,
-    RequestFailed,
+    RateLimitExceededError,
+    RequestFailedError,
 )
 from .gateway import Gateway  # noqa: F401
 from .hotwater import HotWater  # noqa: F401

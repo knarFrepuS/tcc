@@ -142,7 +142,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         for zon_config in config[SZ_ZONES]:
             try:
                 zone = Zone(self, zon_config)
-            except exc.InvalidSchema as err:
+            except exc.InvalidSchemaError as err:
                 self._logger.warning(
                     f"{self}: zone_id='{zon_config[SZ_ZONE_ID]}' ignored: {err}"
                 )
@@ -227,7 +227,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         request: _EvoDictT
 
         if mode not in [m[SZ_SYSTEM_MODE] for m in self.allowedSystemModes]:
-            raise exc.InvalidParameter(f"{self}: Unsupported/unknown mode: {mode}")
+            raise exc.InvalidParameterError(f"{self}: Unsupported/unknown mode: {mode}")
 
         if until is None:
             request = {
@@ -321,7 +321,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         async def get_schedule(child: HotWater | Zone) -> _ScheduleT:
             try:
                 return await child.get_schedule()
-            except exc.InvalidSchedule:
+            except exc.InvalidScheduleError:
                 self._logger.warning(
                     f"Ignoring schedule of {child._id} ({child.name}): missing/invalid"
                 )

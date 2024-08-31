@@ -193,7 +193,7 @@ async def test_task_id(
     try:
         await _test_task_id(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")

@@ -124,7 +124,7 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
     if zone := evo._get_single_tcs().zones_by_id.get(faked.GHOST_ZONE_ID):
         try:
             schedule = await zone.get_schedule()
-        except evo2.InvalidSchedule:
+        except evo2.InvalidScheduleError:
             pass
         else:
             pytest.fail("Expected InvalidSchedule exception")
@@ -187,7 +187,7 @@ async def test_basics(
             await instantiate_client_v2(user_credentials, session, dont_login=True)
         )
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -202,7 +202,7 @@ async def test_sched_(
     try:
         await _test_sched__apis(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -217,7 +217,7 @@ async def test_status(
     try:
         await _test_status_apis(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -232,7 +232,7 @@ async def test_system(
     try:
         await _test_system_apis(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")

@@ -160,7 +160,7 @@ class AbstractTokenManager(ABC):
                     CREDS_REFRESH_TOKEN | {SZ_REFRESH_TOKEN: self.refresh_token}
                 )
 
-            except exc.AuthenticationFailed as err:
+            except exc.AuthenticationFailedError as err:
                 if err.status != HTTPStatus.BAD_REQUEST:  # e.g. invalid tokens
                     raise
 
@@ -203,7 +203,7 @@ class AbstractTokenManager(ABC):
             self._token_data_from_api(token_data)
 
         except (KeyError, TypeError) as err:
-            raise exc.AuthenticationFailed(
+            raise exc.AuthenticationFailedError(
                 f"Invalid response from server: {err}"
             ) from err
 
@@ -222,17 +222,17 @@ class AbstractTokenManager(ABC):
             # <title>Authorize error <h1>Authorization failed
             # <p>The authorization server have encoutered an error while processing...
             content = await response.text()
-            raise exc.AuthenticationFailed(
+            raise exc.AuthenticationFailedError(
                 f"Server response is not JSON: {HTTPMethod.POST} {AUTH_URL}: {content}"
             ) from err
 
         except aiohttp.ClientResponseError as err:
             if hint := _ERR_MSG_LOOKUP_AUTH.get(err.status):
-                raise exc.AuthenticationFailed(hint, status=err.status) from err
-            raise exc.AuthenticationFailed(str(err), status=err.status) from err
+                raise exc.AuthenticationFailedError(hint, status=err.status) from err
+            raise exc.AuthenticationFailedError(str(err), status=err.status) from err
 
         except aiohttp.ClientError as err:  # e.g. ClientConnectionError
-            raise exc.AuthenticationFailed(str(err)) from err
+            raise exc.AuthenticationFailedError(str(err)) from err
 
     @abstractmethod
     async def save_access_token(self) -> None:  # HA: api
@@ -284,11 +284,11 @@ class Broker:
 
         except aiohttp.ClientResponseError as err:
             if hint := _ERR_MSG_LOOKUP_BASE.get(err.status):
-                raise exc.RequestFailed(hint, status=err.status) from err
-            raise exc.RequestFailed(str(err), status=err.status) from err
+                raise exc.RequestFailedError(hint, status=err.status) from err
+            raise exc.RequestFailedError(str(err), status=err.status) from err
 
         except aiohttp.ClientError as err:  # e.g. ClientConnectionError
-            raise exc.RequestFailed(str(err)) from err
+            raise exc.RequestFailedError(str(err)) from err
 
     async def _headers(self) -> dict[str, str]:
         """Ensure the Authorization Header has a valid Access Token."""

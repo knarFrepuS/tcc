@@ -10,11 +10,11 @@ from __future__ import annotations
 
 from .base import EvohomeClient  # noqa: F401
 from .exceptions import (  # noqa: F401
-    AuthenticationFailed,
+    AuthenticationFailedError,
     EvohomeError,
-    InvalidSchema,
-    RateLimitExceeded,
-    RequestFailed,
+    InvalidSchemaError,
+    RateLimitExceededError,
+    RequestFailedError,
 )
 
 __version__ = "1.0.5"

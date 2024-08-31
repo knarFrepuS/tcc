@@ -315,7 +315,7 @@ async def test_usr_account(
     try:
         await _test_usr_account(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -330,7 +330,7 @@ async def test_all_config(
     try:
         await _test_all_config(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -345,7 +345,7 @@ async def test_loc_status(
     try:
         await _test_loc_status(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -360,7 +360,7 @@ async def test_tcs_mode(
     try:
         await _test_tcs_mode(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -380,7 +380,7 @@ async def test_zone_mode(
     try:
         await _test_zone_mode(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")
@@ -400,7 +400,7 @@ async def test_schedule(
     try:
         await _test_schedule(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailed:
+    except evo2.AuthenticationFailedError:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip("Unable to authenticate")

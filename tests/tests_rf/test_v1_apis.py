@@ -41,5 +41,5 @@ async def test_client_apis(
         await _test_client_apis(
             await instantiate_client_v1(*user_credentials, session=session)
         )
-    except evohome.AuthenticationFailed:
+    except evohome.AuthenticationFailedError:
         pytest.skip("Unable to authenticate")

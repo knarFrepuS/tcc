@@ -309,7 +309,7 @@ class EvohomeClient(EvohomeClientDeprecated):
 
         # harden code against unexpected schema (JSON structure)
         except (LookupError, TypeError, ValueError) as err:
-            raise exc.InvalidSchema(str(err)) from err
+            raise exc.InvalidSchemaError(str(err)) from err
         return result  # type: ignore[return-value]
 
     async def get_system_modes(self) -> NoReturn:
@@ -374,12 +374,14 @@ class EvohomeClient(EvohomeClientDeprecated):
             device_dict = self.named_devices.get(id_or_name)
 
         if device_dict is None:
-            raise exc.InvalidSchema(
+            raise exc.InvalidSchemaError(
                 f"No zone {id_or_name} in location {self.location_id}"
             )
 
         if (model := device_dict[SZ_THERMOSTAT_MODEL_TYPE]) != SZ_EMEA_ZONE:
-            raise exc.InvalidSchema(f"Zone {id_or_name} is not an EMEA_ZONE: {model}")
+            raise exc.InvalidSchemaError(
+                f"Zone {id_or_name} is not an EMEA_ZONE: {model}"
+            )
 
         return device_dict
 
@@ -446,7 +448,7 @@ class EvohomeClient(EvohomeClientDeprecated):
                 ret: _DeviceDictT = device
                 return ret
 
-        raise exc.InvalidSchema(f"No DHW in location {self.location_id}")
+        raise exc.InvalidSchemaError(f"No DHW in location {self.location_id}")
 
     async def _set_dhw(
         self,

@@ -20,15 +20,15 @@ class DeprecationError(EvohomeBaseError):
     """The method or property has changed, or is otherwise deprecated."""
 
 
-class InvalidSchema(EvohomeError):
+class InvalidSchemaError(EvohomeError):
     """The config/status JSON is invalid (e.g. missing an entity Id)."""
 
 
-class InvalidParameter(EvohomeError):
+class InvalidParameterError(EvohomeError):
     """The supplied parameter(s) is/are invalid (e.g. unknown/unsupported mode)."""
 
 
-class InvalidSchedule(InvalidSchema):
+class InvalidScheduleError(InvalidSchemaError):
     """The schedule has an invalid schema."""
 
 
@@ -36,7 +36,7 @@ class NoSingleTcsError(EvohomeError):
     """There is not exactly one TCS in the user's installation."""
 
 
-class RequestFailed(EvohomeError):
+class RequestFailedError(EvohomeError):
     """The API request failed for some reason (no/invalid/unexpected response).
 
     Could be caused by any aiohttp.ClientError, for example: ConnectionError.  If the
@@ -48,11 +48,11 @@ class RequestFailed(EvohomeError):
         self.status = status  # iff cause was aiohttp.ClientResponseError
 
 
-class RateLimitExceeded(RequestFailed):
+class RateLimitExceededError(RequestFailedError):
     """API request failed because the vendor's API rate limit was exceeded."""
 
 
-class AuthenticationFailed(RequestFailed):
+class AuthenticationFailedError(RequestFailedError):
     """Unable to authenticate (unable to obtain an access token).
 
     The cause could be any FailedRequest, including RateLimitExceeded.

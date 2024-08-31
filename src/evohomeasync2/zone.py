@@ -193,15 +193,15 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
                 f"{self.TYPE}/{self._id}/schedule", schema=self.SCH_SCHEDULE_GET
             )  # type: ignore[assignment]
 
-        except exc.RequestFailed as err:
+        except exc.RequestFailedError as err:
             if err.status == HTTPStatus.BAD_REQUEST:
-                raise exc.InvalidSchedule(
+                raise exc.InvalidScheduleError(
                     f"{self}: No Schedule / Schedule is invalid"
                 ) from err
-            raise exc.RequestFailed(f"{self}: Unexpected error") from err
+            raise exc.RequestFailedError(f"{self}: Unexpected error") from err
 
         except vol.Invalid as err:
-            raise exc.InvalidSchedule(
+            raise exc.InvalidScheduleError(
                 f"{self}: No Schedule / Schedule is invalid"
             ) from err
 
@@ -217,16 +217,20 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
             try:
                 json.dumps(schedule)
             except (OverflowError, TypeError, ValueError) as err:
-                raise exc.InvalidSchedule(f"{self}: Invalid schedule: {err}") from err
+                raise exc.InvalidScheduleError(
+                    f"{self}: Invalid schedule: {err}"
+                ) from err
 
         elif isinstance(schedule, str):
             try:
                 schedule = json.loads(schedule)
             except json.JSONDecodeError as err:
-                raise exc.InvalidSchedule(f"{self}: Invalid schedule: {err}") from err
+                raise exc.InvalidScheduleError(
+                    f"{self}: Invalid schedule: {err}"
+                ) from err
 
         else:
-            raise exc.InvalidSchedule(
+            raise exc.InvalidScheduleError(
                 f"{self}: Invalid schedule type: {type(schedule)}"
             )
 
@@ -263,11 +267,11 @@ class Zone(_ZoneDeprecated, _ZoneBase):
         super().__init__(config[SZ_ZONE_ID], tcs, config)
 
         if not self.modelType or self.modelType == ZoneModelType.UNKNOWN:
-            raise exc.InvalidSchema(
+            raise exc.InvalidSchemaError(
                 f"{self}: Invalid model type '{self.modelType}' (is it a ghost zone?)"
             )
         if not self.zoneType or self.zoneType == ZoneType.UNKNOWN:
-            raise exc.InvalidSchema(
+            raise exc.InvalidSchemaError(
                 f"{self}: Invalid zone type '{self.zoneType}' (is it a ghost zone?)"
             )
 

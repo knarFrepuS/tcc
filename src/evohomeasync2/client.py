@@ -215,7 +215,7 @@ async def cli(
 
     try:
         await evo.login()
-    except exc.AuthenticationFailed:
+    except exc.AuthenticationFailedError:
         await websession.close()
         raise
 

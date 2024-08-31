@@ -166,7 +166,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         try:  # the cached access_token may be valid, but is not authorized
             await self.user_account()
 
-        except exc.AuthenticationFailed as err:
+        except exc.AuthenticationFailedError as err:
             if err.status != HTTPStatus.UNAUTHORIZED:  # or not self.access_token:
                 raise
 
