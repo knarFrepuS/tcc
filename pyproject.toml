@@ -202,14 +202,14 @@
   ]
 
   ignore = [
-    "ANN101",
-    "ANN401",
-    "B011",  # Do not call assert False since python -O removes these calls
-    "COM812",
-    "G004",
-    "E501",  # Line too long
-    "EXE001",
-    "S101",
+    "ANN101",  # Missing type annotation for function argument {name}
+    "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in {name}
+    "B011",  #   Do not call assert False since python -O removes these calls
+    "COM812",  # Trailing comma missing
+    "G004",  #   Logging statement uses f-string
+    "E501",  #   Line too long
+    "EXE001",  # Shebang is present but file is not executable
+    "S101",  #   Use of assert detected
     "SIM102",  # Use a single `if` statement instead of nested `if` statements
     "SIM114",  # Combine `if` branches using logical `or` operator
     "UP009",  #  UTF-8 encoding declaration is unnecessary
