@@ -74,6 +74,8 @@
   exclude = "docs"
   files = ["src", "tests"]
 
+  # enable_incomplete_feature  = "NewGenericSyntax"
+
   no_implicit_optional = true
 
   # see: https://mypy.readthedocs.io/en/stable/existing_code.html#introduce-stricter-options
@@ -169,7 +171,7 @@
     "UP",  #    pyupgrade
   ]
 
-  ignore = ["ANN001", "ANN002", "ANN003", "ANN101", "ANN401", "B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"]
+  ignore = ["ANN101", "ANN401", "B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"]
   # B011   - Do not call assert False since python -O removes these calls
   # E501   - Line too long
   # G004   - Logging statement uses f-string

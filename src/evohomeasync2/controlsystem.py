@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime as dt
-from typing import TYPE_CHECKING, Final, NoReturn
+from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 from . import exceptions as exc
 from .const import (
@@ -54,62 +54,62 @@ if TYPE_CHECKING:
 class _ControlSystemDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
-    async def set_status_reset(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_reset(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_reset() is deprecrated, use .reset_mode()"
         )
 
-    async def set_status(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status() is deprecrated, use .set_mode()"
         )
 
-    async def set_status_normal(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_normal(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_normal() is deprecrated, use .set_auto()"
         )
 
-    async def set_status_away(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_away(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_away() is deprecrated, use .set_away()"
         )
 
-    async def set_status_custom(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_custom(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_custom() is deprecrated, use .set_custom()"
         )
 
-    async def set_status_dayoff(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_dayoff(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_dayoff() is deprecrated, use .set_dayoff()"
         )
 
-    async def set_status_eco(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_eco(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_eco() is deprecrated, use .set_eco()"
         )
 
-    async def set_status_heatingoff(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_heatingoff(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_heatingoff() is deprecrated, use .set_heatingoff()"
         )
 
-    async def zone_schedules_backup(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def zone_schedules_backup(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .zone_schedules_backup() is deprecated, use .get_schedules()"
         )
 
-    async def zone_schedules_restore(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def zone_schedules_restore(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .zone_schedules_restore() is deprecated, use .set_schedules()"
         )
 
-    async def backup_schedules(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def backup_schedules(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .backup_schedules() is deprecated, use .get_schedules()"
         )
 
-    async def restore_schedules(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def restore_schedules(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .restore_schedules() is deprecated, use .set_schedules()"
         )

@@ -9,6 +9,7 @@ import pathlib
 from collections.abc import AsyncGenerator, Callable
 from datetime import datetime as dt
 from functools import lru_cache
+from typing import Self
 
 import aiohttp
 import pytest
@@ -87,8 +88,10 @@ def location_status_fixture(install: str, loc_id: str) -> JsonObjectType:
 def broker_get(install: str) -> Callable:
     """Return a mock of Broker.get()."""
 
-    async def get(  # type: ignore[no-untyped-def]
-        self, url: str, schema: vol.Schema | None = None
+    async def get(
+        self: Self,  # type: ignore[misc]
+        url: str,
+        schema: vol.Schema | None = None,
     ) -> JsonArrayType | JsonObjectType:
         if "userAccount" in url:  # EvohomeClient.user_account
             return SCH_USER_ACCOUNT(user_account_fixture(install))  # type: ignore[no-any-return]

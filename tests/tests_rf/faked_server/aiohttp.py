@@ -31,7 +31,9 @@ class StreamReader(asyncio.StreamReader):
 
     _buffer = bytearray()
 
-    def __init__(self, limit=_DEFAULT_LIMIT, loop=None) -> None:
+    def __init__(
+        self, limit: int = _DEFAULT_LIMIT, loop: asyncio.AbstractEventLoop | None = None
+    ) -> None:
         pass
 
     async def read(self, n: int = -1) -> bytes:
@@ -50,7 +52,7 @@ class StreamReader(asyncio.StreamReader):
         """Read data from the stream until ``separator`` is found."""
         raise NotImplementedError
 
-    async def __aenter__(self, *args, **kwargs) -> Self:
+    async def __aenter__(self, *args: Any, **kwargs: Any) -> Self:
         return self
 
     async def __aexit__(
@@ -69,7 +71,9 @@ class ClientError(Exception):
 class ClientResponseError(ClientError):
     """A faked ClientResponseError."""
 
-    def __init__(self, msg, /, *, status: int | None = None, **kwargs) -> None:
+    def __init__(
+        self, msg: str, /, *, status: int | None = None, **kwargs: Any
+    ) -> None:
         super().__init__(msg)
         self.status = status
 
@@ -77,14 +81,16 @@ class ClientResponseError(ClientError):
 class ClientTimeout:
     """A faked ClientTimeout."""
 
-    def __init__(self, /, *, total: float | None = None, **kwargs) -> None:
+    def __init__(self, /, *, total: float | None = None, **kwargs: Any) -> None:
         self.total: float = total or 30
 
 
 class ClientSession:
     """A faked ClientSession."""
 
-    def __init__(self, /, *, timeout: ClientTimeout | None = None, **kwargs) -> None:
+    def __init__(
+        self, /, *, timeout: ClientTimeout | None = None, **kwargs: Any
+    ) -> None:
         self._timeout = timeout or ClientTimeout()
 
         # this is required, so no .get()
@@ -132,7 +138,7 @@ class ClientResponse:
         data: str | None = None,
         json: dict[str, Any] | None = None,
         session: ClientSession | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.method = method
         self.url = url
@@ -178,7 +184,7 @@ class ClientResponse:
             return "text/html"
         return "text/plain"
 
-    async def text(self, /, **kwargs) -> str:  # assumes is JSON or plaintext
+    async def text(self, /, **kwargs: Any) -> str:  # is JSON or plaintext
         """Return the response body as text."""
         if self.content_type == "application/json":
             return json.dumps(self._body)
@@ -186,14 +192,14 @@ class ClientResponse:
             return self._body
         raise NotImplementedError
 
-    async def json(self, /, **kwargs) -> dict | list:  # assumes is JSON or plaintext
+    async def json(self, /, **kwargs: Any) -> dict | list:  # is JSON or plaintext
         """Return the response body as json (a dict)."""
         if self.content_type == "application/json":
             return self._body
         assert not isinstance(self._body, (dict | list))  # mypy
         return json.loads(self._body)
 
-    async def __aenter__(self, *args, **kwargs) -> Self:
+    async def __aenter__(self, *args: Any, **kwargs: Any) -> Self:
         return self
 
     async def __aexit__(

@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final, NoReturn
+from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 from . import exceptions as exc
 from .gateway import Gateway
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 class _LocationDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
-    async def status(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def status(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .status() is deprecated, use .refresh_status()"
         )

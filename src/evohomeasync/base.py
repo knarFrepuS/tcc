@@ -6,7 +6,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime as dt
 from http import HTTPMethod
-from typing import TYPE_CHECKING, Final, NoReturn
+from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 import aiohttp
 
@@ -115,53 +115,53 @@ class EvohomeClientDeprecated:
         # while await get_task_status(task_id) != "Succeeded":
         #     await asyncio.sleep(1)
 
-    async def _do_request(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def _do_request(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient._do_request() is deprecated, use .broker.make_request()"
         )
 
-    async def get_system_modes(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def get_system_modes(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.get_modes() is deprecated, "
             "use .get_system_modes() or .get_zone_modes()"
         )
 
-    async def set_status_away(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_away(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.set_status_away() is deprecated, use .set_mode_away()"
         )
 
-    async def set_status_custom(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_custom(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.set_status_custom() is deprecated, use .set_mode_custom()"
         )
 
-    async def set_status_dayoff(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_dayoff(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.set_status_dayoff() is deprecated, use .set_mode_dayoff()"
         )
 
-    async def set_status_eco(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_eco(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.set_status_eco() is deprecated, use .set_mode_eco()"
         )
 
-    async def set_status_heatingoff(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_heatingoff(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.set_status_heatingoff() is deprecated, use .set_mode_heatingoff()"
         )
 
-    async def set_status_normal(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def set_status_normal(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.set_status_normal() is deprecated, use .set_mode_auto()"
         )
 
-    async def temperatures(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def temperatures(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.temperatures() is deprecated, use .get_temperatures()"
         )
 
-    async def cancel_temp_override(self, *args, **kwargs) -> NoReturn:  # type: ignore[no-untyped-def]
+    async def cancel_temp_override(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             "EvohomeClient.cancel_temp_override() is deprecated, use .set_zone_auto()"
         )
