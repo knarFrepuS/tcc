@@ -275,6 +275,5 @@ async def wait_for_comm_task_v2(evo: evo2.EvohomeClient, task_id: str) -> bool |
         if response["state"] in ("Created", "Running"):  # type: ignore[call-overload]
             await asyncio.sleep(0.3)
             continue
-        else:
-            # raise RuntimeError(f"Unexpected state: {response['state']}")
-            _LOGGER.warning(f"Unexpected state: {response['state']}")  # type: ignore[call-overload]
+        # raise RuntimeError(f"Unexpected state: {response['state']}")
+        _LOGGER.warning(f"Unexpected state: {response['state']}")  # type: ignore[call-overload]
