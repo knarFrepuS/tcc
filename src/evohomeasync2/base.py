@@ -180,7 +180,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         """Return the information of the user account."""
         return self._user_account
 
-    async def user_account(self, force_update: bool = False) -> _EvoDictT:
+    async def user_account(self, *, force_update: bool = False) -> _EvoDictT:
         """Return the user account information.
 
         If required/forced, retrieve that data from the vendor's API.
@@ -202,7 +202,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         """Return the installation info (config) of all the user's locations."""
         return self._full_config
 
-    async def installation(self, force_update: bool = False) -> _EvoListT:
+    async def installation(self, *, force_update: bool = False) -> _EvoListT:
         """Return the configuration of the user's locations their status.
 
         If required/forced, retrieve that data from the vendor's API.
@@ -216,7 +216,7 @@ class EvohomeClient(EvohomeClientDeprecated):
 
         return await self._installation()  # aka self.installation_info
 
-    async def _installation(self, refresh_status: bool = True) -> _EvoListT:
+    async def _installation(self, *, refresh_status: bool = True) -> _EvoListT:
         """Return the configuration of the user's locations with their status.
 
         The refresh_status flag is used for dev/test to disable retreiving the initial
@@ -309,7 +309,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         return await self._get_single_tcs().get_schedules()
 
     async def set_schedules(
-        self, schedules: _ScheduleT, match_by_name: bool = False
+        self, schedules: _ScheduleT, *, match_by_name: bool = False
     ) -> bool:
         """Restore all schedules to the default TCS and return True if success.
 

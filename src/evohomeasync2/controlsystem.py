@@ -347,7 +347,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         return schedules
 
     async def set_schedules(
-        self, schedules: _ScheduleT, match_by_name: bool = False
+        self, schedules: _ScheduleT, *, match_by_name: bool = False
     ) -> bool:
         """Restore all schedules to the control system and return True if success.
 

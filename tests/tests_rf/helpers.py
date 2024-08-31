@@ -135,6 +135,7 @@ _global_token_manager: TokenManager | None = None
 async def instantiate_client_v2(
     user_credentials: tuple[str, str],
     session: aiohttp.ClientSession,
+    *,
     dont_login: bool = False,
 ) -> evo2.EvohomeClient:
     """Instantiate a client, and logon to the vendor API (cache any tokens)."""
