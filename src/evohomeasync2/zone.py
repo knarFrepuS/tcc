@@ -64,9 +64,9 @@ class ActiveFaultsBase:
     TYPE: _DhwIdT | _ZoneIdT  # "temperatureZone", "domesticHotWater"
 
     def __init__(
-        self, id: _DhwIdT | _ZoneIdT, broker: Broker, logger: logging.Logger
+        self, child_id: _DhwIdT | _ZoneIdT, broker: Broker, logger: logging.Logger, /
     ) -> None:
-        self._id: Final = id
+        self._id: Final = child_id
 
         self._broker = broker
         self._logger = logger
@@ -88,20 +88,20 @@ class ActiveFaultsBase:
     def _update_status(self, status: _EvoDictT) -> None:
         last_logged = {}
 
-        def hash(fault: _EvoDictT) -> str:
+        def hash_(fault: _EvoDictT) -> str:
             return f"{fault[SZ_FAULT_TYPE]}_{fault[SZ_SINCE]}"
 
         def log_as_active(fault: _EvoDictT) -> None:
             self._logger.warning(
                 f"Active fault: {self}: {fault[SZ_FAULT_TYPE]}, since {fault[SZ_SINCE]}"
             )
-            last_logged[hash(fault)] = dt.now()
+            last_logged[hash_(fault)] = dt.now()
 
         def log_as_resolved(fault: _EvoDictT) -> None:
             self._logger.info(
                 f"Fault cleared: {self}: {fault[SZ_FAULT_TYPE]}, since {fault[SZ_SINCE]}"
             )
-            del self._last_logged[hash(fault)]
+            del self._last_logged[hash_(fault)]
 
         for fault in status[SZ_ACTIVE_FAULTS]:
             if fault not in self.active_faults:  # new active fault
@@ -111,7 +111,7 @@ class ActiveFaultsBase:
             if fault not in status[SZ_ACTIVE_FAULTS]:  # fault resolved
                 log_as_resolved(fault)
 
-            elif dt.now() - self._last_logged[hash(fault)] > _ONE_DAY:
+            elif dt.now() - self._last_logged[hash_(fault)] > _ONE_DAY:
                 log_as_active(fault)
 
         self.active_faults = status[SZ_ACTIVE_FAULTS]
@@ -139,8 +139,8 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
     SCH_SCHEDULE_GET: Final[vol.Schema]  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final[vol.Schema]  # type: ignore[misc]
 
-    def __init__(self, id: str, tcs: ControlSystem, config: _EvoDictT) -> None:
-        super().__init__(id, tcs._broker, tcs._logger)
+    def __init__(self, child_id: str, tcs: ControlSystem, config: _EvoDictT, /) -> None:
+        super().__init__(child_id, tcs._broker, tcs._logger)
 
         self.tcs = tcs
 
@@ -259,7 +259,7 @@ class Zone(_ZoneDeprecated, _ZoneBase):
     SCH_SCHEDULE_GET: Final = SCH_GET_SCHEDULE_ZONE  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final = SCH_PUT_SCHEDULE_ZONE  # type: ignore[misc]
 
-    def __init__(self, tcs: ControlSystem, config: _EvoDictT) -> None:
+    def __init__(self, tcs: ControlSystem, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_ZONE_ID], tcs, config)
 
         if not self.modelType or self.modelType == ZoneModelType.UNKNOWN:

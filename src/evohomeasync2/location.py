@@ -46,7 +46,7 @@ class Location(_LocationDeprecated):
     STATUS_SCHEMA: Final[vol.Schema] = SCH_LOCN_STATUS
     TYPE: Final = SZ_LOCATION
 
-    def __init__(self, client: EvohomeClient, config: _EvoDictT) -> None:
+    def __init__(self, client: EvohomeClient, config: _EvoDictT, /) -> None:
         self.client = client
 
         self._broker: Broker = client.broker

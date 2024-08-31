@@ -122,7 +122,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
     STATUS_SCHEMA: Final[vol.Schema] = SCH_TCS_STATUS
     TYPE: Final = SZ_TEMPERATURE_CONTROL_SYSTEM  # type: ignore[misc]
 
-    def __init__(self, gateway: Gateway, config: _EvoDictT) -> None:
+    def __init__(self, gateway: Gateway, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_SYSTEM_ID], gateway._broker, gateway._logger)
 
         self.gateway = gateway
@@ -355,27 +355,31 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         The default is to match a schedule to its zone/dhw by id.
         """
 
-        async def restore_by_id(id: _ZoneIdT | _DhwIdT, schedule: _ScheduleT) -> bool:
+        async def restore_by_id(
+            child_id: _DhwIdT | _ZoneIdT, schedule: _ScheduleT
+        ) -> bool:
             """Restore schedule by id and return False if there was no match."""
 
             name = schedule.get(SZ_NAME)
 
-            if self.hotwater and self.hotwater.dhwId == id:
+            if self.hotwater and self.hotwater.dhwId == child_id:
                 await self.hotwater.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
-            elif zone := self.zones_by_id.get(id):
+            elif zone := self.zones_by_id.get(child_id):
                 await zone.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
             else:
                 self._logger.warning(
-                    f"Ignoring schedule of {id} ({name}): unknown id"
+                    f"Ignoring schedule of {child_id} ({name}): unknown id"
                     ", consider matching by name rather than by id"
                 )
                 return False
 
             return True
 
-        async def restore_by_name(id: _ZoneIdT | _DhwIdT, schedule: _ScheduleT) -> bool:
+        async def restore_by_name(
+            child_id: _DhwIdT | _ZoneIdT, schedule: _ScheduleT
+        ) -> bool:
             """Restore schedule by name and return False if there was no match."""
 
             name: str = schedule[SZ_NAME]  # type: ignore[assignment]
@@ -388,7 +392,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
             else:
                 self._logger.warning(
-                    f"Ignoring schedule of {id} ({name}): unknown name"
+                    f"Ignoring schedule of {child_id} ({name}): unknown name"
                     ", consider matching by id rather than by name"
                 )
                 return False
@@ -402,13 +406,13 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
         with_errors = False
 
-        for id, schedule in schedules.items():
+        for child_id, schedule in schedules.items():
             assert isinstance(schedule, dict)  # mypy
 
             if match_by_name:
-                matched = await restore_by_name(id, schedule)
+                matched = await restore_by_name(child_id, schedule)
             else:
-                matched = await restore_by_id(id, schedule)
+                matched = await restore_by_id(child_id, schedule)
 
             with_errors = with_errors and not matched
 

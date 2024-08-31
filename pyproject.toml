@@ -154,10 +154,13 @@
 
 [tool.ruff.lint]
   select = [
+    "A",    #   flake8-builtins
     "ANN",  #   flake8-annotations
     "ASYNC",  # flake8-async
     "B",  #     flake8-bugbear
+    "BLE",  #   blind-except
     "C",  #     convention
+    "C90",  #   mcabe
     "E",  #     pycodestyle
     "F",  #     Pyflakes
     "FA",  #    flake8-future-annotations
@@ -165,16 +168,18 @@
     "G",  #     flake8-logging-format
     "I",  #     isort
     "LOG",  #   flake8-logging
+#   "N",  #     pep8-naming
     "PGH",  #   pygrep hooks
 #   "PL",  #    pylint
 #   "PT",  #    flake8-pytest-style
     "RET",  #   flake8-return
     "RSE",  #   flake8-raise
+    "S",  #     flake8-bandit
     "SIM",  #   flake8-simplify
 #   "SLF",  #   flake8-self
-    "S",  #     flake8-bandit
     "TCH",  #   flake8-type-checking
     "UP",  #    pyupgrade
+    "W",  #     pycodestyle
   ]
 
   ignore = ["ANN101", "ANN401", "B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"]
