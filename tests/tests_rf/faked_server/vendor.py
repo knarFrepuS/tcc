@@ -49,44 +49,44 @@ if TYPE_CHECKING:
         _ZoneIdT,
     )
 
-    from .const import _bodyT, _methodT, _statusT, _urlT
+    from .const import BodyType, MethodType, StatusType, UrlType
 
 
-def _dhw_id(url: _urlT) -> _DhwIdT:
+def _dhw_id(url: UrlType) -> _DhwIdT:
     """Extract a DHW ID from a URL."""
     return url.split(f"{SZ_DOMESTIC_HOT_WATER}/")[1].split("/")[0]
 
 
-def _loc_id(url: _urlT) -> _LocationIdT:
+def _loc_id(url: UrlType) -> _LocationIdT:
     """Extract a Location ID from a URL."""
     return url.split(f"{SZ_LOCATION}/")[1].split("/")[0]
 
 
-def _tcs_id(url: _urlT) -> _SystemIdT:
+def _tcs_id(url: UrlType) -> _SystemIdT:
     """Extract a TCS ID from a URL."""
     return url.split(f"{SZ_TEMPERATURE_CONTROL_SYSTEM}/")[1].split("/")[0]
 
 
-def _usr_id(url: _urlT) -> _UserIdT:
+def _usr_id(url: UrlType) -> _UserIdT:
     """Extract a TCS ID from a URL."""
     return url.split("?userId=")[1].split("&")[0]
 
 
-def _zon_id(url: _urlT) -> _ZoneIdT:
+def _zon_id(url: UrlType) -> _ZoneIdT:
     """Extract a Zone ID from a URL."""
     return url.split(f"{SZ_TEMPERATURE_ZONE}/")[1].split("/")[0]
 
 
 def validate_id_of_url(
-    id_fnc: Callable[[_urlT], str],
-) -> Callable[..., Callable[[FakedServer], _bodyT]]:
+    id_fnc: Callable[[UrlType], str],
+) -> Callable[..., Callable[[FakedServer], BodyType]]:
     """Validate the ID in the URL and set the status accordingly."""
 
     def decorator(
-        fnc: Callable[[FakedServer], _bodyT | None],
-    ) -> Callable[[FakedServer], _bodyT]:
+        fnc: Callable[[FakedServer], BodyType | None],
+    ) -> Callable[[FakedServer], BodyType]:
         @functools.wraps(fnc)
-        def wrapper(svr: FakedServer) -> _bodyT:
+        def wrapper(svr: FakedServer) -> BodyType:
             if svr._method != HTTPMethod.GET:
                 svr.status = HTTPStatus.METHOD_NOT_ALLOWED
                 return {"message": "Method not allowed"}
@@ -133,14 +133,14 @@ class FakedServer:
         self._schedules: dict[str, dict] = {}
         self._user_config = self._user_config_from_full_config(self._full_config)
 
-        self.body: _bodyT | None = None
-        self._method: _methodT | None = None
-        self.status: _statusT | None = None
-        self._url: _urlT | None = None
+        self.body: BodyType | None = None
+        self._method: MethodType | None = None
+        self.status: StatusType | None = None
+        self._url: UrlType | None = None
 
     def request(
-        self, method: _methodT, url: _urlT, data: dict | str | None = None
-    ) -> _bodyT:
+        self, method: MethodType, url: UrlType, data: dict | str | None = None
+    ) -> BodyType:
         self._method = method
         self._url = url
         self._data = data
@@ -163,14 +163,14 @@ class FakedServer:
             self.status = HTTPStatus.OK if self.body else HTTPStatus.NOT_FOUND
         return self.body
 
-    def oauth_token(self) -> _bodyT | None:
+    def oauth_token(self) -> BodyType | None:
         if self._method != HTTPMethod.POST:
             self.status = HTTPStatus.METHOD_NOT_ALLOWED
         elif self._url == AUTH_URL:
             return MOCK_AUTH_RESPONSE
         return None
 
-    def usr_account(self) -> _bodyT:
+    def usr_account(self) -> BodyType:
         if self._method != HTTPMethod.GET:
             self.status = HTTPStatus.METHOD_NOT_ALLOWED
             return {"message": "Method not allowed"}
@@ -182,29 +182,29 @@ class FakedServer:
         return {"message": "Not found"}
 
     @validate_id_of_url(_usr_id)
-    def all_config(self) -> _bodyT | None:  # full_locn
+    def all_config(self) -> BodyType | None:  # full_locn
         usr_id = _usr_id(self._url)  # type: ignore[arg-type]
 
         if self._user_config["userId"] == usr_id:
             return self._full_config
         return None
 
-    def loc_config(self) -> _bodyT | None:
+    def loc_config(self) -> BodyType | None:
         raise NotImplementedError
 
     @validate_id_of_url(_loc_id)
-    def loc_status(self) -> _bodyT | None:
+    def loc_status(self) -> BodyType | None:
         loc_id = _loc_id(self._url)  # type: ignore[arg-type]
 
         if self._locn_status[SZ_LOCATION_ID] == loc_id:
             return self._locn_status
         return None
 
-    def tcs_mode(self) -> _bodyT | None:
+    def tcs_mode(self) -> BodyType | None:
         raise NotImplementedError
 
     @validate_id_of_url(_tcs_id)
-    def tcs_status(self) -> _bodyT | None:
+    def tcs_status(self) -> BodyType | None:
         tcs_id = _tcs_id(self._url)  # type: ignore[arg-type]
 
         for gwy in self._locn_status[SZ_GATEWAYS]:
@@ -213,7 +213,7 @@ class FakedServer:
                     return tcs
         return None
 
-    def zon_schedule(self) -> _bodyT | None:
+    def zon_schedule(self) -> BodyType | None:
         zon_id = _zon_id(self._url)  # type: ignore[arg-type]
 
         if self._method == HTTPMethod.GET:
@@ -239,11 +239,11 @@ class FakedServer:
         self._schedules[zon_id] = convert_to_get_schedule(self._data)
         return {"id": "1234567890"}
 
-    def zon_mode(self) -> _bodyT | None:
+    def zon_mode(self) -> BodyType | None:
         raise NotImplementedError
 
     @validate_id_of_url(_zon_id)
-    def zon_status(self) -> _bodyT | None:
+    def zon_status(self) -> BodyType | None:
         zon_id = _zon_id(self._url)  # type: ignore[arg-type]
 
         for gwy in self._locn_status[SZ_GATEWAYS]:
@@ -253,7 +253,7 @@ class FakedServer:
                         return zone
         return None
 
-    def dhw_schedule(self) -> _bodyT | None:
+    def dhw_schedule(self) -> BodyType | None:
         dhw_id = _dhw_id(self._url)  # type: ignore[arg-type]
 
         if self._method == HTTPMethod.GET:
@@ -277,7 +277,7 @@ class FakedServer:
         return {"id": "1234567890"}
 
     @validate_id_of_url(_dhw_id)
-    def dhw_status(self) -> _bodyT | None:
+    def dhw_status(self) -> BodyType | None:
         dhw_id = _dhw_id(self._url)  # type: ignore[arg-type]
 
         for gwy in self._locn_status[SZ_GATEWAYS]:
@@ -287,7 +287,7 @@ class FakedServer:
                         return dhw
         return None
 
-    def dhw_mode(self) -> _bodyT | None:
+    def dhw_mode(self) -> BodyType | None:
         raise NotImplementedError
 
     @staticmethod

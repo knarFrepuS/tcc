@@ -65,13 +65,13 @@ class Location(_LocationDeprecated):
             gwy = Gateway(self, gwy_config)
 
             self._gateways.append(gwy)
-            self.gateways[gwy.gatewayId] = gwy
+            self.gateways[gwy.gateway_id] = gwy
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}(id='{self._id}')"
 
     @property
-    def locationId(self) -> _LocationIdT:
+    def location_id(self) -> _LocationIdT:
         return self._id
 
     @property
@@ -80,12 +80,12 @@ class Location(_LocationDeprecated):
         return ret
 
     @property
-    def locationOwner(self) -> _EvoDictT:
+    def location_owner(self) -> _EvoDictT:
         ret: _EvoDictT = self._config[SZ_LOCATION_OWNER]
         return ret
 
     @property
-    def locationType(self) -> str:
+    def location_type(self) -> str:
         ret: str = self._config[SZ_LOCATION_TYPE]
         return ret
 
@@ -95,12 +95,12 @@ class Location(_LocationDeprecated):
         return ret
 
     @property
-    def timeZone(self) -> _EvoDictT:
+    def time_zone(self) -> _EvoDictT:
         ret: _EvoDictT = self._config[SZ_TIME_ZONE]
         return ret
 
     @property
-    def useDaylightSaveSwitching(self) -> bool:
+    def use_daylight_save_switching(self) -> bool:
         ret: bool = self._config[SZ_USE_DAYLIGHT_SAVE_SWITCHING]
         return ret
 

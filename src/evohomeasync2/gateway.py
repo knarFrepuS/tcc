@@ -49,10 +49,10 @@ class Gateway(ActiveFaultsBase):
             tcs = ControlSystem(self, tcs_config)
 
             self._control_systems.append(tcs)
-            self.control_systems[tcs.systemId] = tcs
+            self.control_systems[tcs.system_id] = tcs
 
     @property
-    def gatewayId(self) -> _GatewayIdT:
+    def gateway_id(self) -> _GatewayIdT:
         return self._id
 
     @property
@@ -61,7 +61,7 @@ class Gateway(ActiveFaultsBase):
         return ret
 
     @property
-    def isWiFi(self) -> bool:
+    def is_wifi(self) -> bool:
         ret: bool = self._config[SZ_IS_WI_FI]
         return ret
 

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from asyncio.streams import _ReaduntilBuffer
     from types import TracebackType
 
-    from .const import _bodyT, _methodT, _statusT, _urlT
+    from .const import BodyType, MethodType, StatusType, UrlType
     from .vendor import FakedServer
 
 
@@ -20,7 +20,7 @@ _DEFAULT_LIMIT = 2**16  # 64 KiB
 
 
 @verify(EnumCheck.UNIQUE)
-class hdrs(StrEnum):  # a la aiohttp
+class hdrs(StrEnum):  # noqa: N801 (a la aiohttp)
     METH_GET = "GET"
     METH_POST = "POST"
     METH_PUT = "PUT"
@@ -131,8 +131,8 @@ class ClientResponse:
 
     def __init__(
         self,
-        method: _methodT,
-        url: _urlT,
+        method: MethodType,
+        url: UrlType,
         /,
         *,
         data: str | None = None,
@@ -147,8 +147,8 @@ class ClientResponse:
         assert self.session is not None  # mypy
         self._faked_server = self.session._faked_server
 
-        self.status: _statusT = None  # type: ignore[assignment]
-        self._body: _bodyT | None = None
+        self.status: StatusType = None  # type: ignore[assignment]
+        self._body: BodyType | None = None
 
         # self.content = StreamReader(
         #     self._faked_server.request(method, url, data=data or json)

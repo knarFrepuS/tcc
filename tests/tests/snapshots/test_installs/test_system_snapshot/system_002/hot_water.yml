@@ -1,14 +1,13 @@
-activeFaults: &id001
+active_faults:
 -   faultType: DHWSensorCommunicationLost
     since: '2023-11-30T18:48:40'
-active_faults: *id001
-allowedModes: &id002
+allowed_modes: &id001
 - FollowSchedule
 - PermanentOverride
 - TemporaryOverride
-dhwId: '3933910'
-dhwStateCapabilitiesResponse:
-    allowedModes: *id002
+dhw_id: '3933910'
+dhw_state_capabilities_esponse:
+    allowedModes: *id001
     allowedStates:
     - 'On'
     - 'Off'
@@ -16,14 +15,14 @@ dhwStateCapabilitiesResponse:
     timingResolution: 00:10:00
 mode: FollowSchedule
 name: Domestic Hot Water
-scheduleCapabilitiesResponse:
+schedule_capabilities_response:
     maxSwitchpointsPerDay: 6
     minSwitchpointsPerDay: 1
     timingResolution: 00:10:00
 state: 'Off'
-stateStatus:
+state_status:
     mode: FollowSchedule
     state: 'Off'
 temperature: null
-temperatureStatus:
+temperature_status:
     isAvailable: false

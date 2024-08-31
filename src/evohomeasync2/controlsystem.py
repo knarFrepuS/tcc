@@ -23,7 +23,6 @@ from .const import (
 from .hotwater import HotWater
 from .schema import SCH_TCS_STATUS
 from .schema.const import (
-    SZ_ACTIVE_FAULTS,
     SZ_ALLOWED_SYSTEM_MODES,
     SZ_DHW,
     SZ_DHW_ID,
@@ -149,23 +148,23 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
             else:
                 self._zones.append(zone)
                 self.zones[zone.name] = zone
-                self.zones_by_id[zone.zoneId] = zone
+                self.zones_by_id[zone.zone_id] = zone
 
         dhw_config: _EvoDictT
         if dhw_config := config.get(SZ_DHW):  # type: ignore[assignment]
             self.hotwater = HotWater(self, dhw_config)
 
     @property
-    def systemId(self) -> _SystemIdT:
+    def system_id(self) -> _SystemIdT:
         return self._id
 
     @property
-    def allowedSystemModes(self) -> _EvoListT:
+    def allowed_system_modes(self) -> _EvoListT:
         ret: _EvoListT = self._config[SZ_ALLOWED_SYSTEM_MODES]
         return ret
 
     @property
-    def modelType(self) -> str:
+    def model_type(self) -> str:
         ret: str = self._config[SZ_MODEL_TYPE]
         return ret
 
@@ -199,18 +198,14 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
                 )
 
     @property
-    def activeFaults(self) -> _EvoListT | None:
-        return self._status.get(SZ_ACTIVE_FAULTS)
-
-    @property
-    def systemModeStatus(self) -> _EvoDictT | None:
+    def system_mode_status(self) -> _EvoDictT | None:
         return self._status.get(SZ_SYSTEM_MODE_STATUS)
 
     @property  # status attr for convenience (new)
     def system_mode(self) -> str | None:
-        if self.systemModeStatus is None:
+        if self.system_mode_status is None:
             return None
-        ret: str = self.systemModeStatus[SZ_MODE]
+        ret: str = self.system_mode_status[SZ_MODE]
         return ret
 
     async def _set_mode(self, mode: dict[str, str | bool]) -> None:
@@ -226,7 +221,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
         request: _EvoDictT
 
-        if mode not in [m[SZ_SYSTEM_MODE] for m in self.allowedSystemModes]:
+        if mode not in [m[SZ_SYSTEM_MODE] for m in self.allowed_system_modes]:
             raise exc.InvalidParameterError(f"{self}: Unsupported/unknown mode: {mode}")
 
         if until is None:
@@ -278,38 +273,38 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         if dhw := self.hotwater:
             dhw_status = {
                 SZ_THERMOSTAT: "DOMESTIC_HOT_WATER",
-                SZ_ID: dhw.dhwId,
+                SZ_ID: dhw.dhw_id,
                 SZ_NAME: dhw.name,
                 SZ_TEMP: None,
             }
 
             if (
-                isinstance(dhw.temperatureStatus, dict)
-                and dhw.temperatureStatus[SZ_IS_AVAILABLE]
+                isinstance(dhw.temperature_status, dict)
+                and dhw.temperature_status[SZ_IS_AVAILABLE]
             ):
-                dhw_status[SZ_TEMP] = dhw.temperatureStatus[SZ_TEMPERATURE]
+                dhw_status[SZ_TEMP] = dhw.temperature_status[SZ_TEMPERATURE]
 
             result.append(dhw_status)
 
         for zone in self._zones:
             zone_status = {
                 SZ_THERMOSTAT: "EMEA_ZONE",
-                SZ_ID: zone.zoneId,
+                SZ_ID: zone.zone_id,
                 SZ_NAME: zone.name,
                 SZ_SETPOINT: None,
                 SZ_TEMP: None,
             }
 
-            if isinstance(zone.setpointStatus, dict):
-                zone_status[SZ_SETPOINT] = zone.setpointStatus[
+            if isinstance(zone.setpoint_status, dict):
+                zone_status[SZ_SETPOINT] = zone.setpoint_status[
                     SZ_TARGET_HEAT_TEMPERATURE
                 ]
 
             if (
-                isinstance(zone.temperatureStatus, dict)
-                and zone.temperatureStatus[SZ_IS_AVAILABLE]
+                isinstance(zone.temperature_status, dict)
+                and zone.temperature_status[SZ_IS_AVAILABLE]
             ):
-                zone_status[SZ_TEMP] = zone.temperatureStatus[SZ_TEMPERATURE]
+                zone_status[SZ_TEMP] = zone.temperature_status[SZ_TEMPERATURE]
 
             result.append(zone_status)
 
@@ -328,19 +323,19 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
             return {}
 
         self._logger.info(
-            f"Schedules: Backing up from {self.systemId} ({self.location.name})"
+            f"Schedules: Backing up from {self.system_id} ({self.location.name})"
         )
 
         schedules = {}
 
         for zone in self._zones:
-            schedules[zone.zoneId] = {
+            schedules[zone.zone_id] = {
                 SZ_NAME: zone.name,
                 SZ_SCHEDULE: await get_schedule(zone),
             }
 
         if self.hotwater:
-            schedules[self.hotwater.dhwId] = {
+            schedules[self.hotwater.dhw_id] = {
                 SZ_NAME: self.hotwater.name,
                 SZ_SCHEDULE: await get_schedule(self.hotwater),
             }
@@ -362,7 +357,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
             name = schedule.get(SZ_NAME)
 
-            if self.hotwater and self.hotwater.dhwId == child_id:
+            if self.hotwater and self.hotwater.dhw_id == child_id:
                 await self.hotwater.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
             elif zone := self.zones_by_id.get(child_id):
@@ -401,7 +396,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
         self._logger.info(
             f"Schedules: Restoring (matched by {'name' if match_by_name else 'id'})"
-            f" to {self.systemId} ({self.location.name})"
+            f" to {self.system_id} ({self.location.name})"
         )
 
         with_errors = False

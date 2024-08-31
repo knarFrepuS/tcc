@@ -1,6 +1,5 @@
-activeFaults: &id001 []
-active_faults: *id001
-allowedSystemModes:
+active_faults: []
+allowed_system_modes:
 -   canBePermanent: true
     canBeTemporary: false
     systemMode: Auto
@@ -19,9 +18,9 @@ allowedSystemModes:
 -   canBePermanent: true
     canBeTemporary: false
     systemMode: HeatingOff
-modelType: EvoTouch
-systemId: '3935923'
-systemModeStatus:
+model_type: EvoTouch
+system_id: '3935923'
+system_mode: Auto
+system_mode_status:
     isPermanent: true
     mode: Auto
-system_mode: Auto

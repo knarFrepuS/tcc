@@ -1,12 +1,11 @@
-activeFaults: &id001 []
-active_faults: *id001
-allowedModes: &id002
+active_faults: []
+allowed_modes: &id001
 - FollowSchedule
 - PermanentOverride
 - TemporaryOverride
-dhwId: '3933910'
-dhwStateCapabilitiesResponse:
-    allowedModes: *id002
+dhw_id: '3933910'
+dhw_state_capabilities_esponse:
+    allowedModes: *id001
     allowedStates:
     - 'On'
     - 'Off'
@@ -14,15 +13,15 @@ dhwStateCapabilitiesResponse:
     timingResolution: 00:10:00
 mode: PermanentOverride
 name: Domestic Hot Water
-scheduleCapabilitiesResponse:
+schedule_capabilities_response:
     maxSwitchpointsPerDay: 6
     minSwitchpointsPerDay: 1
     timingResolution: 00:10:00
 state: 'Off'
-stateStatus:
+state_status:
     mode: PermanentOverride
     state: 'Off'
 temperature: 23.0
-temperatureStatus:
+temperature_status:
     isAvailable: true
     temperature: 23.0

@@ -5,6 +5,12 @@ from __future__ import annotations
 
 from typing import Literal
 
+type BodyType = list | dict | str
+type MethodType = Literal["GET", "POST", "PUT"]
+type StatusType = int
+type UrlType = str
+
+
 GHOST_ZONE_ID = "0000000"  # "3432521"
 
 # Sample responses from evohome-client
@@ -668,9 +674,3 @@ def user_config_from_full_config(full_config: list) -> dict:
 
 
 MOCK_USER_CONFIG = user_config_from_full_config(MOCK_FULL_CONFIG)
-
-
-_bodyT = list | dict | str
-_methodT = Literal["GET", "POST", "PUT"]
-_statusT = int
-_urlT = str

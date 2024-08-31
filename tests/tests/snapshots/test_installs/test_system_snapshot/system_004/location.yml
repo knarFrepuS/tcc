@@ -1,17 +1,17 @@
 country: CzechRepublic
-locationId: '2664492'
-locationOwner:
+location_id: '2664492'
+location_owner:
     firstname: Jan
     lastname: '********'
     userId: '2224990'
     username: nobody@nowhere.com
-locationType: Residential
+location_type: Residential
 name: Summer House
-timeZone:
+time_zone:
     currentOffsetMinutes: 120
     displayName: "(UTC+01:00) Praha, Bratislava, Budape\u0161\u0165, B\u011Blehrad,\
         \ Lubla\u0148"
     offsetMinutes: 60
     supportsDaylightSaving: true
     timeZoneId: CentralEuropeStandardTime
-useDaylightSaveSwitching: true
+use_daylight_save_switching: true

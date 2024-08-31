@@ -164,7 +164,7 @@ async def _test_system_apis(evo: evo2.EvohomeClient) -> None:
     except evo2.NoSingleTcsError:
         tcs = evo.locations[0].gateways[0].control_systems[0]
 
-    mode = tcs.systemModeStatus[SZ_MODE]
+    mode = tcs.system_mode_status[SZ_MODE]
     assert mode in SYSTEM_MODES
 
     await tcs.set_mode(SystemMode.AWAY)

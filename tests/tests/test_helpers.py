@@ -51,13 +51,13 @@ def test_get_schedule_dhw() -> None:
 def test_helper_function() -> None:
     """Test helper functions."""
 
-    CAMEL_CASE = "testString"
-    PASCAL_CASE = "TestString"
+    camel_case_str = "testString"
+    pascal_case_str = "TestString"
 
-    assert camel_case(CAMEL_CASE) == CAMEL_CASE
-    assert camel_case(PASCAL_CASE) == CAMEL_CASE
-    assert pascal_case(CAMEL_CASE) == PASCAL_CASE
-    assert pascal_case(PASCAL_CASE) == PASCAL_CASE
+    assert camel_case(camel_case_str) == camel_case_str
+    assert camel_case(pascal_case_str) == camel_case_str
+    assert pascal_case(camel_case_str) == pascal_case_str
+    assert pascal_case(pascal_case_str) == pascal_case_str
 
-    assert camel_case(pascal_case(CAMEL_CASE)) == CAMEL_CASE
-    assert pascal_case(camel_case(PASCAL_CASE)) == PASCAL_CASE
+    assert camel_case(pascal_case(camel_case_str)) == camel_case_str
+    assert pascal_case(camel_case(pascal_case_str)) == pascal_case_str

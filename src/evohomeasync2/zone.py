@@ -121,10 +121,6 @@ class ActiveFaultsBase:
 class _ZoneBaseDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
-    @property
-    def zone_type(self) -> NoReturn:
-        raise exc.DeprecationError(f"{self}: .zone_type is deprecated, use .TYPE")
-
     async def schedule(self) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .schedule() is deprecrated, use .get_schedule()"
@@ -168,19 +164,15 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
         self._status = status
 
     @property
-    def activeFaults(self) -> _EvoListT | None:
-        return self._status.get(SZ_ACTIVE_FAULTS)
-
-    @property
-    def temperatureStatus(self) -> _EvoDictT | None:
+    def temperature_status(self) -> _EvoDictT | None:
         return self._status.get(SZ_TEMPERATURE_STATUS)
 
     @property  # status attr for convenience (new)
     def temperature(self) -> float | None:
-        if not self.temperatureStatus or not self.temperatureStatus[SZ_IS_AVAILABLE]:
+        if not self.temperature_status or not self.temperature_status[SZ_IS_AVAILABLE]:
             return None
-        assert isinstance(self.temperatureStatus[SZ_TEMPERATURE], float)  # mypy check
-        ret: float = self.temperatureStatus[SZ_TEMPERATURE]
+        assert isinstance(self.temperature_status[SZ_TEMPERATURE], float)  # mypy check
+        ret: float = self.temperature_status[SZ_TEMPERATURE]
         return ret
 
     async def get_schedule(self) -> _EvoDictT:
@@ -266,64 +258,64 @@ class Zone(_ZoneDeprecated, _ZoneBase):
     def __init__(self, tcs: ControlSystem, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_ZONE_ID], tcs, config)
 
-        if not self.modelType or self.modelType == ZoneModelType.UNKNOWN:
+        if not self.model_type or self.model_type == ZoneModelType.UNKNOWN:
             raise exc.InvalidSchemaError(
-                f"{self}: Invalid model type '{self.modelType}' (is it a ghost zone?)"
+                f"{self}: Invalid model type '{self.model_type}' (is it a ghost zone?)"
             )
-        if not self.zoneType or self.zoneType == ZoneType.UNKNOWN:
+        if not self.zone_type or self.zone_type == ZoneType.UNKNOWN:
             raise exc.InvalidSchemaError(
-                f"{self}: Invalid zone type '{self.zoneType}' (is it a ghost zone?)"
+                f"{self}: Invalid zone type '{self.zone_type}' (is it a ghost zone?)"
             )
 
-        if self.modelType not in ZONE_MODEL_TYPES:
+        if self.model_type not in ZONE_MODEL_TYPES:
             self._logger.warning(
-                "%s: Unknown model type '%s' (YMMV)", self, self.modelType
+                "%s: Unknown model type '%s' (YMMV)", self, self.model_type
             )
-        if self.zoneType not in ZONE_TYPES:
+        if self.zone_type not in ZONE_TYPES:
             self._logger.warning(
-                "%s: Unknown zone type '%s' (YMMV)", self, self.zoneType
+                "%s: Unknown zone type '%s' (YMMV)", self, self.zone_type
             )
 
     @property
-    def zoneId(self) -> _ZoneIdT:
+    def zone_id(self) -> _ZoneIdT:
         return self._id
 
     @property
-    def modelType(self) -> str:
+    def model_type(self) -> str:
         ret: str = self._config[SZ_MODEL_TYPE]
         return ret
 
     @property
-    def setpointCapabilities(self) -> _EvoDictT:
+    def setpoint_capabilities(self) -> _EvoDictT:
         ret: _EvoDictT = self._config[SZ_SETPOINT_CAPABILITIES]
         return ret
 
     @property  # for convenience (is not a top-level config attribute)
-    def allowedSetpointModes(self) -> _EvoListT:
-        ret: _EvoListT = self.setpointCapabilities[SZ_ALLOWED_SETPOINT_MODES]
+    def allowed_setpoint_modes(self) -> _EvoListT:
+        ret: _EvoListT = self.setpoint_capabilities[SZ_ALLOWED_SETPOINT_MODES]
         return ret
 
     @property
-    def scheduleCapabilities(self) -> _EvoDictT:
+    def schedule_capabilities(self) -> _EvoDictT:
         result: _EvoDictT = self._config[SZ_SCHEDULE_CAPABILITIES]
         return result
 
     @property  # config attr for convenience (new)
     def max_heat_setpoint(self) -> float | None:
-        if not self.setpointCapabilities:
+        if not self.setpoint_capabilities:
             return None
-        ret: float = self.setpointCapabilities[SZ_MAX_HEAT_SETPOINT]
+        ret: float = self.setpoint_capabilities[SZ_MAX_HEAT_SETPOINT]
         return ret
 
     @property  # config attr for convenience (new)
     def min_heat_setpoint(self) -> float | None:
-        if not self.setpointCapabilities:
+        if not self.setpoint_capabilities:
             return None
-        ret: float = self.setpointCapabilities[SZ_MIN_HEAT_SETPOINT]
+        ret: float = self.setpoint_capabilities[SZ_MIN_HEAT_SETPOINT]
         return ret
 
     @property
-    def zoneType(self) -> str:
+    def zone_type(self) -> str:
         ret: str = self._config[SZ_ZONE_TYPE]
         return ret
 
@@ -333,28 +325,28 @@ class Zone(_ZoneDeprecated, _ZoneBase):
         return ret
 
     @property
-    def setpointStatus(self) -> _EvoDictT | None:
+    def setpoint_status(self) -> _EvoDictT | None:
         return self._status.get(SZ_SETPOINT_STATUS)
 
     @property  # status attr for convenience (new)
     def mode(self) -> str | None:
-        if not self.setpointStatus:
+        if not self.setpoint_status:
             return None
-        ret: str = self.setpointStatus[SZ_SETPOINT_MODE]
+        ret: str = self.setpoint_status[SZ_SETPOINT_MODE]
         return ret
 
     @property  # status attr for convenience (new)
     def target_cool_temperature(self) -> float | None:
-        if not self.setpointStatus:
+        if not self.setpoint_status:
             return None
-        ret: float | None = self.setpointStatus.get(SZ_TARGET_COOL_TEMPERATURE)
+        ret: float | None = self.setpoint_status.get(SZ_TARGET_COOL_TEMPERATURE)
         return ret
 
     @property  # status attr for convenience (new)
     def target_heat_temperature(self) -> float | None:
-        if not self.setpointStatus:
+        if not self.setpoint_status:
             return None
-        ret: float = self.setpointStatus[SZ_TARGET_HEAT_TEMPERATURE]
+        ret: float = self.setpoint_status[SZ_TARGET_HEAT_TEMPERATURE]
         return ret
 
     # TODO: no provision for cooling

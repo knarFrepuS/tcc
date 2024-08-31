@@ -38,9 +38,9 @@ class HotWaterDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
     @property
-    def zoneId(self) -> NoReturn:
+    def zoneId(self) -> NoReturn:  # noqa: N802
         raise exc.DeprecationError(
-            f"{self}: .zoneId is deprecated, use .dhwId (or ._id)"
+            f"{self}: .zoneId is deprecated, use .dhw_id (or ._id)"
         )
 
     async def get_dhw_state(self, *args: Any, **kwargs: Any) -> NoReturn:
@@ -77,22 +77,22 @@ class HotWater(HotWaterDeprecated, _ZoneBase):
         super().__init__(config[SZ_DHW_ID], tcs, config)
 
     @property
-    def dhwId(self) -> _DhwIdT:
+    def dhw_id(self) -> _DhwIdT:
         return self._id
 
     @property
-    def dhwStateCapabilitiesResponse(self) -> _EvoDictT:
+    def dhw_state_capabilities_esponse(self) -> _EvoDictT:
         ret: _EvoDictT = self._config[SZ_DHW_STATE_CAPABILITIES_RESPONSE]
         return ret
 
     @property
-    def scheduleCapabilitiesResponse(self) -> _EvoDictT:
+    def schedule_capabilities_response(self) -> _EvoDictT:
         ret: _EvoDictT = self._config[SZ_SCHEDULE_CAPABILITIES_RESPONSE]
         return ret
 
     @property  # for convenience (is not a top-level config attribute)
-    def allowedModes(self) -> _EvoListT:
-        ret: _EvoListT = self.dhwStateCapabilitiesResponse[SZ_ALLOWED_MODES]
+    def allowed_modes(self) -> _EvoListT:
+        ret: _EvoListT = self.dhw_state_capabilities_esponse[SZ_ALLOWED_MODES]
         return ret
 
     @property
@@ -100,21 +100,21 @@ class HotWater(HotWaterDeprecated, _ZoneBase):
         return "Domestic Hot Water"
 
     @property
-    def stateStatus(self) -> _EvoDictT | None:
+    def state_status(self) -> _EvoDictT | None:
         return self._status.get(SZ_STATE_STATUS)
 
     @property  # status attr for convenience (new)
     def mode(self) -> str | None:
-        if self.stateStatus is None:
+        if self.state_status is None:
             return None
-        ret: str = self.stateStatus[SZ_MODE]
+        ret: str = self.state_status[SZ_MODE]
         return ret
 
     @property  # status attr for convenience (new)
     def state(self) -> str | None:
-        if self.stateStatus is None:
+        if self.state_status is None:
             return None
-        ret: str = self.stateStatus[SZ_STATE]
+        ret: str = self.state_status[SZ_STATE]
         return ret
 
     def _next_setpoint(self) -> tuple[dt, str] | None:  # WIP: for convenience (new)
