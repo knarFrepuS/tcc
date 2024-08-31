@@ -134,8 +134,8 @@ SCH_ALLOWED_SYSTEM_MODE: Final = vol.Any(SCH_SYSTEM_MODE_PERM, SCH_SYSTEM_MODE_T
 
 SCH_DHW_STATE_CAPABILITIES_RESPONSE: Final = vol.Schema(
     {
-        vol.Required(SZ_ALLOWED_STATES): list(m.value for m in DhwState),
-        vol.Required(SZ_ALLOWED_MODES): list(m.value for m in ZoneMode),
+        vol.Required(SZ_ALLOWED_STATES): [m.value for m in DhwState],
+        vol.Required(SZ_ALLOWED_MODES): [m.value for m in ZoneMode],
         vol.Required(SZ_MAX_DURATION): str,
         vol.Required(SZ_TIMING_RESOLUTION): vol.Datetime(format="00:%M:00"),
     },
@@ -189,7 +189,7 @@ SCH_SETPOINT_CAPABILITIES: Final = vol.Schema(  # min/max as per evohome
         vol.Required(SZ_CAN_CONTROL_COOL): bool,
         vol.Optional(SZ_MAX_COOL_SETPOINT): float,  # TODO
         vol.Optional(SZ_MIN_COOL_SETPOINT): float,  # TODO
-        vol.Required(SZ_ALLOWED_SETPOINT_MODES): list(m.value for m in ZoneMode),
+        vol.Required(SZ_ALLOWED_SETPOINT_MODES): [m.value for m in ZoneMode],
         vol.Required(SZ_VALUE_RESOLUTION): float,  # 0.5
         vol.Required(SZ_MAX_DURATION): str,  # "1.00:00:00"
         vol.Required(SZ_TIMING_RESOLUTION): vol.Datetime(
