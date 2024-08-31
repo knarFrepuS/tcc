@@ -167,9 +167,9 @@ class EvohomeClientDeprecated:
         )
 
 
-# any API request invokes self._populate_user_data()             (for authentication)
-# - every API GET invokes self._populate_locn_data(refresh=True) (for up-to-date state)
-# - every API PUT invokes self._populate_locn_data()             (for config)
+# any API request invokes self._populate_user_data()                   (for authentication)
+# - every API GET invokes self._populate_locn_data(force_refresh=True) (for up-to-date state)
+# - every API PUT invokes self._populate_locn_data()                   (for config)
 
 
 class EvohomeClient(EvohomeClientDeprecated):
@@ -230,7 +230,7 @@ class EvohomeClient(EvohomeClientDeprecated):
     # User methods...
 
     async def _populate_user_data(
-        self, force_refresh: bool = False
+        self, *, force_refresh: bool = False
     ) -> dict[str, bool | int | str]:
         """Retrieve the cached user data (excl. the session ID).
 
@@ -248,12 +248,12 @@ class EvohomeClient(EvohomeClientDeprecated):
 
         # only retrieve the config data if we don't already have it
         if not self.user_info:
-            await self._populate_user_data(force_refresh=False)
+            await self._populate_user_data()
         return self.user_info
 
     # Location methods...
 
-    async def _populate_locn_data(self, force_refresh: bool = True) -> _LocnDataT:
+    async def _populate_locn_data(self, *, force_refresh: bool = False) -> _LocnDataT:
         """Retrieve the latest system data.
 
         Pull the latest JSON from the web unless force_refresh is False.
@@ -271,14 +271,14 @@ class EvohomeClient(EvohomeClientDeprecated):
         return self.location_data
 
     async def get_temperatures(
-        self, force_refresh: bool = True
+        self, *, disable_refresh: bool = False
     ) -> _EvoListT:  # a convenience function
         """Retrieve the latest details for each zone (incl. DHW)."""
 
         set_point: float
         status: str
 
-        await self._populate_locn_data(force_refresh=force_refresh)
+        await self._populate_locn_data(force_refresh=not disable_refresh)
 
         result = []
 
@@ -321,7 +321,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         """Set the system mode."""
 
         # just want id, so retrieve the config data only if we don't already have it
-        await self._populate_locn_data(force_refresh=False)  # get self.location_id
+        await self._populate_locn_data()  # get self.location_id
 
         data: dict[str, str] = {SZ_QUICK_ACTION: system_mode}
         if until:
@@ -365,7 +365,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         device_dict: _DeviceDictT | None
 
         # just want id, so retrieve the config data only if we don't already have it
-        await self._populate_locn_data(force_refresh=False)
+        await self._populate_locn_data()
 
         if isinstance(id_or_name, int):
             device_dict = self.devices.get(id_or_name)
@@ -438,7 +438,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         """
 
         # just want id, so retrieve the config data only if we don't already have it
-        await self._populate_locn_data(force_refresh=False)
+        await self._populate_locn_data()
 
         for device in self.location_data[SZ_DEVICES]:
             if device[SZ_THERMOSTAT_MODEL_TYPE] == SZ_DOMESTIC_HOT_WATER:
