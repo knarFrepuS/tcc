@@ -9,8 +9,8 @@ import pytest
 
 import evohomeasync as evohome
 
-from .conftest import _DBG_USE_REAL_AIOHTTP
-from .helpers import aiohttp, instantiate_client_v1
+from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .helpers import instantiate_client_v1
 
 _LOGGER = logging.getLogger(__name__)
 

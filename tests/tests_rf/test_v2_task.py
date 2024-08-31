@@ -21,9 +21,8 @@ from evohomeasync2.schema.const import (
 )
 from evohomeasync2.schema.helpers import pascal_case
 
-from .conftest import _DBG_USE_REAL_AIOHTTP
+from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
 from .helpers import (
-    aiohttp,
     instantiate_client_v2,
     should_fail,
     should_work,

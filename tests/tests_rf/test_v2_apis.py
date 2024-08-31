@@ -22,8 +22,8 @@ from evohomeasync2.schema.const import SZ_MODE
 from evohomeasync2.schema.schedule import SCH_PUT_SCHEDULE_DHW, SCH_PUT_SCHEDULE_ZONE
 
 from . import faked_server as faked
-from .conftest import _DBG_USE_REAL_AIOHTTP
-from .helpers import aiohttp, instantiate_client_v2
+from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .helpers import instantiate_client_v2
 
 if TYPE_CHECKING:
     from evohomeasync2.zone import Zone

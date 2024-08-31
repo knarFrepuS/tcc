@@ -36,8 +36,8 @@ from evohomeasync2.schema.const import (
 from evohomeasync2.schema.schedule import convert_to_put_schedule
 
 from . import faked_server as faked
-from .conftest import _DBG_USE_REAL_AIOHTTP
-from .helpers import aiohttp, instantiate_client_v2, should_fail, should_work
+from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .helpers import instantiate_client_v2, should_fail, should_work
 
 if TYPE_CHECKING:
     from evohomeasync2.schema import _EvoDictT
