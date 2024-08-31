@@ -7,6 +7,7 @@ import asyncio
 import logging
 from http import HTTPMethod, HTTPStatus
 
+import pytest
 import voluptuous as vol
 
 import evohomeasync as evo1
@@ -101,7 +102,7 @@ async def should_fail_v1(
     except aiohttp.ClientResponseError as err:
         assert err.status == status, err.status
     else:
-        assert False, response.status
+        pytest.fail(f"response.status == {response.status}")
 
     if _DBG_DISABLE_STRICT_ASSERTS:
         return None
@@ -121,7 +122,7 @@ async def should_fail_v1(
     elif isinstance(content, str):
         pass
     else:
-        assert False, response.content_type
+        pytest.fail(f"response.content_type == {response.content_type}")
 
     return content  # type: ignore[no-any-return]
 
@@ -249,7 +250,7 @@ async def should_fail(
         assert status in (HTTPStatus.NOT_FOUND,), status
 
     else:
-        assert False, response.content_type
+        pytest.fail(f"response.content_type == {response.content_type}")
 
     assert isinstance(content, dict | list | str), content
 
