@@ -156,18 +156,17 @@
     "B",  #     flake8-bugbear
     "E",  #     pycodestyle
     "F",  #     Pyflakes
+    "FBT",  #   flake8-boolean-trap
     "G",  #     flake8-logging-format
     "I",  #     isort
     "LOG",  #   flake8-logging
     "PGH",  #   pygrep hooks
+#   "PT",  #    flake8-pytest-style
     "RET",  #   flake8-return
     "SIM",  #   flake8-simplify
     "S",  #     flake8-bandit
     "UP",  #    pyupgrade
   ]
-#   "FBT",  #   flake8-boolean-trap
-#   "PT",  #    flake8-pytest-style
-#   "RET",  #   flake8-return
 
   ignore = ["B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"]
   # B011   - Do not call assert False since python -O removes these calls
