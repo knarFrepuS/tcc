@@ -35,7 +35,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True)
-def patches_for_tests(monkeypatch: pytest.MonkeyPatch) -> None:
+def _patches_for_tests(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("evohomeasync2.base.aiohttp", aiohttp)
     monkeypatch.setattr("evohomeasync2.broker.aiohttp", aiohttp)
 
@@ -56,7 +56,7 @@ async def session() -> AsyncGenerator[aiohttp.ClientSession, None]:
         await client_session.close()
 
 
-@pytest.fixture()
+@pytest.fixture
 def user_credentials() -> tuple[str, str]:
     username: str = os.getenv("TEST_USERNAME") or "username@email.com"
     password: str = os.getenv("TEST_PASSWORD") or "password!"
