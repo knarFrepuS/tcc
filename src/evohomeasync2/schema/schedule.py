@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 import voluptuous as vol
 
@@ -21,7 +21,9 @@ from .const import (
     SZ_TIME_OF_DAY,
 )
 from .helpers import pascal_case
-from .typing import _EvoDictT, _EvoListT
+
+if TYPE_CHECKING:
+    from .typing import _EvoDictT, _EvoListT
 
 _ScheduleT = dict[str, dict[str, Any]]
 

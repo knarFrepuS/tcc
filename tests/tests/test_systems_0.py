@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-
-import pytest
+from typing import TYPE_CHECKING
 
 from evohomeasync2.schema import SCH_FULL_CONFIG, SCH_LOCN_STATUS, SCH_USER_ACCOUNT
 
 from .helpers import TEST_DIR, test_schema
+
+if TYPE_CHECKING:
+    import pytest
 
 WORK_DIR = f"{TEST_DIR}/systems_0"
 

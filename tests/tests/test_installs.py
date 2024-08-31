@@ -4,17 +4,19 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
-import pytest
 import yaml
-from pytest_snapshot.plugin import Snapshot  # type: ignore[import-untyped]
 
 import evohomeasync2 as evo2
 
 from .conftest import FIXTURES_DIR, TokenManager, broker_get
 from .helpers import get_property_methods
+
+if TYPE_CHECKING:
+    import pytest
+    from pytest_snapshot.plugin import Snapshot  # type: ignore[import-untyped]
 
 
 def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:

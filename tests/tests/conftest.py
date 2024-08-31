@@ -6,18 +6,21 @@ from __future__ import annotations
 import json
 import logging
 import pathlib
-from collections.abc import AsyncGenerator, Callable
 from datetime import datetime as dt
 from functools import lru_cache
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 import aiohttp
 import pytest
 import pytest_asyncio
-import voluptuous as vol
 
 from evohomeasync2.broker import AbstractTokenManager
 from evohomeasync2.schema import SCH_FULL_CONFIG, SCH_LOCN_STATUS, SCH_USER_ACCOUNT
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator, Callable
+
+    import voluptuous as vol
 
 type JsonValueType = (
     dict[str, JsonValueType] | list[JsonValueType] | str | int | float | bool | None

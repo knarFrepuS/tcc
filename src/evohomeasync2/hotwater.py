@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime as dt
 from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 from . import exceptions as exc
@@ -27,6 +26,8 @@ from .schema.const import (
 from .zone import _ZoneBase
 
 if TYPE_CHECKING:
+    from datetime import datetime as dt
+
     import voluptuous as vol
 
     from . import ControlSystem

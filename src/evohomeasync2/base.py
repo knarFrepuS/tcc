@@ -4,19 +4,20 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime as dt
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Any, Final, NoReturn
 
-import aiohttp
-
 from . import exceptions as exc
 from .broker import AbstractTokenManager, Broker
-from .controlsystem import ControlSystem
 from .location import Location
 from .schema import SCH_FULL_CONFIG, SCH_USER_ACCOUNT
 
 if TYPE_CHECKING:
+    from datetime import datetime as dt
+
+    import aiohttp
+
+    from .controlsystem import ControlSystem
     from .schema import _EvoDictT, _EvoListT, _LocationIdT, _ScheduleT, _SystemIdT
 
 

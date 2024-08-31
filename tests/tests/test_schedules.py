@@ -5,8 +5,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-
-import voluptuous as vol
+from typing import TYPE_CHECKING
 
 from evohomeasync2.schema.schedule import (
     SCH_GET_SCHEDULE_DHW,
@@ -18,6 +17,9 @@ from evohomeasync2.schema.schedule import (
 )
 
 from .helpers import TEST_DIR
+
+if TYPE_CHECKING:
+    import voluptuous as vol
 
 WORK_DIR = Path(f"{TEST_DIR}/schedules")
 

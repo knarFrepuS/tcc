@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from datetime import datetime as dt
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -19,11 +20,13 @@ from evohomeasync2.schema import (
 )
 from evohomeasync2.schema.const import SZ_MODE
 from evohomeasync2.schema.schedule import SCH_PUT_SCHEDULE_DHW, SCH_PUT_SCHEDULE_ZONE
-from evohomeasync2.zone import Zone
 
 from . import faked_server as faked
 from .conftest import _DBG_USE_REAL_AIOHTTP
 from .helpers import aiohttp, instantiate_client_v2
+
+if TYPE_CHECKING:
+    from evohomeasync2.zone import Zone
 
 #######################################################################################
 

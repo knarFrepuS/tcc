@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import functools
 import re
-from collections.abc import Callable
 from http import HTTPMethod, HTTPStatus
 from typing import TYPE_CHECKING
 
@@ -40,6 +39,8 @@ from .const import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from evohomeasync2.schema import (
         _DhwIdT,
         _LocationIdT,

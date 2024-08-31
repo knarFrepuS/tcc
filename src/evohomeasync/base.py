@@ -4,11 +4,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime as dt
 from http import HTTPMethod
 from typing import TYPE_CHECKING, Any, Final, NoReturn
-
-import aiohttp
 
 from . import exceptions as exc
 from .broker import Broker, _LocnDataT, _SessionIdT, _UserDataT, _UserInfoT
@@ -41,11 +38,15 @@ from .schema import (
     SZ_THERMOSTAT_MODEL_TYPE,
     SZ_USER_INFO,
     SZ_VALUE,
+    SystemMode,
 )
 
 if TYPE_CHECKING:
+    from datetime import datetime as dt
+
+    import aiohttp
+
     from .schema import (
-        SystemMode,
         _DeviceDictT,
         _DhwIdT,
         _EvoListT,
