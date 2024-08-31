@@ -163,20 +163,25 @@
     "C",  #     convention
     "C4",  #    flake8-comprehensions
     "C90",  #   mcabe
+    "COM",  #   flake8-commas
+#   "D",  #     pydocstyle  # a big job
 #   "DTZ",  #   flake8-datetimez
     "E",  #     pycodestyle
+#   "EM",  #    flake8-errmsg
     "EXE",  #   flake8-executable
     "F",  #     Pyflakes
     "FA",  #    flake8-future-annotations
     "FBT",  #   flake8-boolean-trap
+#   "FURB",  #  refurb
     "G",  #     flake8-logging-format
     "I",  #     isort
     "ICN",  #   flake8-import-conventions
     "INP",  #   flake8-no-pep420
     "LOG",  #   flake8-logging
 #   "N",  #     pep8-naming
+#   "PERF",  #  perflint
     "PGH",  #   pygrep hooks
-    "PIE",  #
+    "PIE",  #   flake8-pie
 #   "PL",  #    pylint
 #   "PT",  #    flake8-pytest-style
     "PTH",  #   flake8-use-pathlib
@@ -184,6 +189,7 @@
     "Q",  #     flake8-quotes
     "RET",  #   flake8-return
     "RSE",  #   flake8-raise
+    "RUF",  #   Ruff-specific rules
     "S",  #     flake8-bandit
     "SIM",  #   flake8-simplify
 #   "SLF",  #   flake8-self
@@ -192,10 +198,11 @@
     "TID",  #   flake8-tidy-imports
     "UP",  #    pyupgrade
     "W",  #     pycodestyle
+    "YTT",  #   flake8-2020
   ]
 
   ignore = [
-    "ANN101", "ANN401", "B011", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"
+    "ANN101", "ANN401", "B011", "COM812", "G004", "E501", "S101", "SIM102", "SIM114", "UP009"
   ]
   # B011   - Do not call assert False since python -O removes these calls
   # E501   - Line too long
