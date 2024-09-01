@@ -223,8 +223,10 @@
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
   "datetime.datetime" = "dt"
   "datetime.timedate" = "td"
-  exceptions = "exc"
   voluptuous = "vol"
+  evohomeasync = "ev1"
+  evohomeasync2 = "ev2"
+  exceptions = "exc"
 
 
 [tool.ruff.lint.isort]

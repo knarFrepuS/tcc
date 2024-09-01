@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-import evohomeasync as evo1
+import evohomeasync as ev1
 import evohomeasync2 as ev2
 from evohomeasync2.client import TokenManager
 from evohomeasync2.const import URL_BASE as URL_BASE_2
@@ -30,13 +30,13 @@ async def instantiate_client_v1(
     username: str,
     password: str,
     session: aiohttp.ClientSession | None = None,
-) -> evo1.EvohomeClient:
+) -> ev1.EvohomeClient:
     """Instantiate a client, and logon to the vendor API."""
 
     global _global_session_id  # noqa: PLW0603
 
     # Instantiation, NOTE: No API calls invoked during instantiation
-    evo = evo1.EvohomeClient(
+    evo = ev1.EvohomeClient(
         username,
         password,
         session=session,
@@ -51,7 +51,7 @@ async def instantiate_client_v1(
 
 
 async def should_work_v1(  # noqa: PLR0913
-    evo: evo1.EvohomeClient,
+    evo: ev1.EvohomeClient,
     method: HTTPMethod,
     url: str,
     json: dict | None = None,
@@ -83,7 +83,7 @@ async def should_work_v1(  # noqa: PLR0913
 
 
 async def should_fail_v1(  # noqa: PLR0913
-    evo: evo1.EvohomeClient,
+    evo: ev1.EvohomeClient,
     method: HTTPMethod,
     url: str,
     json: dict | None = None,
