@@ -174,7 +174,6 @@ class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
     def temperature(self) -> float | None:
         if not self.temperature_status or not self.temperature_status[SZ_IS_AVAILABLE]:
             return None
-        assert isinstance(self.temperature_status[SZ_TEMPERATURE], float)  # mypy check
         ret: float = self.temperature_status[SZ_TEMPERATURE]
         return ret
 
@@ -229,15 +228,13 @@ class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
                 f"{self}: Invalid schedule type: {type(schedule)}"
             )
 
-        assert isinstance(schedule, dict)  # mypy check
-
         _ = await self._broker.put(
             f"{self.TYPE}/{self.id}/schedule",
             json=schedule,
             schema=self.SCH_SCHEDULE_PUT,
         )
 
-        self._schedule = schedule
+        self._schedule = schedule  # type: ignore[assignment]
 
 
 class _ZoneDeprecated:

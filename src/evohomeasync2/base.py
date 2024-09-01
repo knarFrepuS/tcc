@@ -195,8 +195,7 @@ class EvohomeClient(EvohomeClientDeprecated):
             "userAccount", schema=SCH_USER_ACCOUNT
         )  # type: ignore[assignment]
 
-        assert self._user_account  # mypy
-        return self._user_account
+        return self._user_account  # type: ignore[return-value]
 
     @property  # full_config (all locations of user)
     def installation_info(self) -> _EvoListT | None:  # from original evohomeclient
@@ -224,7 +223,7 @@ class EvohomeClient(EvohomeClientDeprecated):
         status of each location (and its child entities, e.g. TCS, zones, etc.).
         """
 
-        assert isinstance(self.account_info, dict)  # mypy
+        assert self.account_info is not None  # noqa: S101  # mypy
 
         # FIXME: shouldn't really be starting again with new objects?
         self.locations = []  # for now, need to clear this before GET

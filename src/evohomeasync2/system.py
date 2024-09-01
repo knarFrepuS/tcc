@@ -409,8 +409,6 @@ class System(_SystemDeprecated, ActiveFaultsMixin, EntityBase):
         with_errors = False
 
         for child_id, schedule in schedules.items():
-            assert isinstance(schedule, dict)  # mypy
-
             if match_by_name:
                 matched = await restore_by_name(child_id, schedule)
             else:

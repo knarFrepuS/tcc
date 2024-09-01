@@ -91,7 +91,6 @@ class Broker:
         response = await self.make_request(HTTPMethod.POST, url, data=self._POST_DATA)
 
         self._user_data: _UserDataT = await response.json()
-        assert self._user_data != {}
 
         user_id: _UserIdT = self._user_data[SZ_USER_INFO][SZ_USER_ID]  # type: ignore[assignment, index]
         session_id: _SessionIdT = self._user_data[SZ_SESSION_ID]  # type: ignore[assignment, index]
@@ -162,10 +161,9 @@ class Broker:
         self._headers = {"content-type": "application/json"}  # remove the sessionId
 
         _, response = await self._populate_user_data()  # get a fresh sessionId
-        assert self._session_id is not None  # mypy hint
 
         _LOGGER.debug(f"... success: new sessionId = {self._session_id}")
-        self._headers[SZ_SESSION_ID] = self._session_id
+        self._headers[SZ_SESSION_ID] = self._session_id  # type: ignore[assignment]
 
         if "session" in url_:  # retry not needed for /session
             return response
