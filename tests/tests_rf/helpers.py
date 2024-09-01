@@ -222,8 +222,8 @@ async def should_fail(  # noqa: PLR0913
                 method, f"{URL_BASE_2}/{url}", json=json
             )
 
-    except aiohttp.ClientResponseError:
-        pytest.fail("Unexpected ClientResponseError")
+    except aiohttp.ClientResponseError as err:
+        pytest.fail(f"Unexpected ClientResponseError: {err}")
 
     assert status is None or response.status == status, response.status
 

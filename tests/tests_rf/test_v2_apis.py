@@ -128,7 +128,7 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
         except evo2.InvalidScheduleError:
             pass
         else:
-            pytest.fail("Expected InvalidSchedule exception")
+            pytest.fail("Expected InvalidScheduleError, but wasn't raised")
 
 
 async def _test_status_apis(evo: evo2.EvohomeClient) -> None:
@@ -238,7 +238,7 @@ async def test_system(
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
-    except NotImplementedError:  # TODO: implement
+    except NotImplementedError as err:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED + f": {err}")
