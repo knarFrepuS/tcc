@@ -119,10 +119,8 @@ async def should_fail_v1(  # noqa: PLR0913
         assert "message" in content, content
     elif isinstance(content, list):
         assert "message" in content[0], content[0]
-    elif isinstance(content, str):
-        pass
-    else:
-        pytest.fail(f"response.content_type == {response.content_type}")
+    elif not isinstance(content, str):
+        pytest.fail(f"response.content_type: {response.content_type}")
 
     return content  # type: ignore[no-any-return]
 

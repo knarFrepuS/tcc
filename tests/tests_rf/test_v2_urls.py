@@ -362,10 +362,10 @@ async def test_tcs_mode(
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
-    except NotImplementedError as err:  # TODO: implement
+    except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED + f": {err}")
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
 
 async def test_zone_mode(
@@ -382,10 +382,10 @@ async def test_zone_mode(
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
-    except NotImplementedError as err:  # TODO: implement
+    except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED + f": {err}")
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
 
 async def test_schedule(

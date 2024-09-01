@@ -42,7 +42,7 @@ def load_fixture(install: str, file_name: str) -> JsonArrayType | JsonObjectType
             text = (FIXTURES_DIR / "default" / file_name).read_text()
 
     except FileNotFoundError:
-        pytest.xfail(f"Fixture file not found: {file_name}")
+        pytest.skip(f"Fixture {file_name} not found in {FIXTURES_DIR / install}")
 
     return json.loads(text)  # type: ignore[no-any-return]
 

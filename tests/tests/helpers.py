@@ -64,7 +64,7 @@ def get_property_methods(obj: object) -> list[str]:
 @lru_cache
 def fixture_file(folder: Path, file_name: str, /) -> dict:
     if not (folder / file_name).is_file():
-        pytest.skip(f"No {file_name} found in {folder.name}")
+        pytest.skip(f"Fixture {file_name} not found in {folder.name}")
 
     with (folder / file_name).open() as f:
         data: dict = json.load(f)

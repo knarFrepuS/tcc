@@ -56,7 +56,7 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
                     dhw = tcs.hotwater
                     break
     if dhw is None:
-        pytest.xfail(ExitTestReason.NO_TESTABLE_DHW)
+        pytest.skip(ExitTestReason.NO_TESTABLE_DHW)
 
     get_url = f"{dhw.TYPE}/{dhw._id}/status"
     put_url = f"{dhw.TYPE}/{dhw._id}/state"
