@@ -165,7 +165,7 @@
     "C4",  #    flake8-comprehensions
     "C90",  #   mcabe
     "COM",  #   flake8-commas
-#   "D",  #     pydocstyle  # a big job
+#   "D",  #     pydocstyle                       # a big job
     "DTZ",  #   flake8-datetimez                 # desirable
     "E",  #     pycodestyle
     "EM",  #    flake8-errmsg
