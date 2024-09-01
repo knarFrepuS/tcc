@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-import evohomeasync2 as ev2
 from evohomeasync2.const import API_STRFTIME, SystemMode, ZoneMode
 from evohomeasync2.schema import (
     SCH_FULL_CONFIG,
@@ -36,11 +35,14 @@ from evohomeasync2.schema.const import (
 from evohomeasync2.schema.schedule import convert_to_put_schedule
 
 from . import faked_server as faked
-from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .conftest import _DBG_USE_REAL_AIOHTTP
 from .const import ExitTestReason
-from .helpers import instantiate_client_v2, should_fail, should_work
+from .helpers import should_fail, should_work
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
+    import evohomeasync2 as ev2
     from evohomeasync2.schema import _EvoDictT
 
 
@@ -303,64 +305,29 @@ async def _test_schedule(evo: ev2.EvohomeClient) -> None:
 #######################################################################################
 
 
-async def test_usr_account(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def test_usr_account(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /userAccount"""
 
-    try:
-        await _test_usr_account(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_usr_account(await evo2)
 
 
-async def test_all_config(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def test_all_config(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /location/installationInfo"""
 
-    try:
-        await _test_all_config(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_all_config(await evo2)
 
 
-async def test_loc_status(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def test_loc_status(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /location/{locationId}/status"""
 
-    try:
-        await _test_loc_status(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_loc_status(await evo2)
 
 
-async def test_tcs_mode(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def test_tcs_mode(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /temperatureControlSystem/{systemId}/mode"""
 
     try:
-        await _test_tcs_mode(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        await _test_tcs_mode(await evo2)
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
@@ -368,19 +335,11 @@ async def test_tcs_mode(
         pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
 
-async def test_zone_mode(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def test_zone_mode(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /temperatureZone/{zoneId}/heatSetpoint"""
 
     try:
-        await _test_zone_mode(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        await _test_zone_mode(await evo2)
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
@@ -388,19 +347,10 @@ async def test_zone_mode(
         pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
 
-async def test_schedule(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def test_schedule(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /{x.TYPE}/{x_id}/schedule"""
 
-    try:
-        await _test_schedule(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_schedule(await evo2)
 
 
 # TODO: test_oauth_token(

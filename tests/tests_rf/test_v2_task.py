@@ -6,11 +6,10 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime as dt, timedelta as td
 from http import HTTPMethod, HTTPStatus
+from typing import TYPE_CHECKING
 
 import pytest
 
-import evohomeasync2 as ev2
-from evohomeasync2 import Gateway, Location, System
 from evohomeasync2.const import API_STRFTIME, DhwState, ZoneMode
 from evohomeasync2.schema.const import (
     SZ_MODE,
@@ -21,14 +20,19 @@ from evohomeasync2.schema.const import (
 )
 from evohomeasync2.schema.helpers import pascal_case
 
-from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .conftest import _DBG_USE_REAL_AIOHTTP
 from .const import ExitTestReason
 from .helpers import (
-    instantiate_client_v2,
     should_fail,
     should_work,
     wait_for_comm_task_v2 as wait_for_comm_task,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
+    import evohomeasync2 as ev2
+    from evohomeasync2 import Gateway, Location, System
 
 #######################################################################################
 
@@ -185,19 +189,10 @@ async def _test_task_id(evo: ev2.EvohomeClient) -> None:
 #######################################################################################
 
 
-async def _out_test_task_id(
-    user_credentials: tuple[str, str],
-    session: aiohttp.ClientSession,
-) -> None:
+async def _out_test_task_id(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /location/{locationId}/status"""
 
     if not _DBG_USE_REAL_AIOHTTP:
         pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
-    try:
-        await _test_task_id(await instantiate_client_v2(user_credentials, session))
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_task_id(await evo2)

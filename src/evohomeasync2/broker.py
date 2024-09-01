@@ -101,11 +101,6 @@ class AbstractTokenManager(ABC):
         """Return the username."""
         return self._user_credentials["Username"]
 
-    @property  # TODO: remove this whan no longer needed
-    def _password(self) -> str:
-        """Return the username."""
-        return self._user_credentials["Password"]
-
     def _token_data_reset(self) -> None:
         """Reset the token data to its falsy state."""
         self.access_token = ""

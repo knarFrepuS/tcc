@@ -3,13 +3,17 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 import evohomeasync as ev1
 
-from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .conftest import _DBG_USE_REAL_AIOHTTP
 from .const import ExitTestReason
-from .helpers import instantiate_client_v1
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable
 
 
 async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
@@ -30,17 +34,13 @@ async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
     #     _ = await evo.get_temperatures()
 
 
-async def test_client_apis(
-    user_credentials: tuple[str, str], session: aiohttp.ClientSession
-) -> None:
+async def test_client_apis(evo2: Awaitable[ev1.EvohomeClient]) -> None:
     """Test _populate_user_data() & _populate_full_data()"""
 
     if not _DBG_USE_REAL_AIOHTTP:
         pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
     try:
-        await _test_client_apis(
-            await instantiate_client_v1(*user_credentials, session=session)
-        )
+        await _test_client_apis(await evo2)
     except ev1.AuthenticationFailedError as err:
         pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

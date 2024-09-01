@@ -3,17 +3,21 @@
 
 import os
 import tempfile
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable
 from pathlib import Path
 from typing import Final
 
 import pytest
 import pytest_asyncio
 
+import evohomeasync as ev1
+import evohomeasync2 as ev2
+
+from . import faked_server as faked
 from .faked_server import FakedServer
 
 # normally, we want these debug flags to be False
-_DBG_USE_REAL_AIOHTTP = False
+_DBG_USE_REAL_AIOHTTP = True
 _DBG_DISABLE_STRICT_ASSERTS = False  # of response content-type, schema
 
 if _DBG_USE_REAL_AIOHTTP:
@@ -51,8 +55,28 @@ async def session() -> AsyncGenerator[aiohttp.ClientSession, None]:
 
 
 @pytest.fixture
+def evo1(
+    user_credentials: tuple[str, str],
+    session: aiohttp.ClientSession | faked.ClientSession,
+) -> Awaitable[ev1.EvohomeClient]:
+    from .helpers import instantiate_client_v1  # HACK: to avoid circular imports
+
+    return instantiate_client_v1(*user_credentials, session=session)
+
+
+@pytest.fixture
 def user_credentials() -> tuple[str, str]:
     username: str = os.getenv("TEST_USERNAME") or "username@email.com"
-    password: str = os.getenv("TEST_PASSWORD") or "password!"
+    password: str = os.getenv("TEST_PASSWORD") or "password"
 
     return username, password
+
+
+@pytest.fixture
+def evo2(
+    user_credentials: tuple[str, str],
+    session: aiohttp.ClientSession | faked.ClientSession,
+) -> Awaitable[ev2.EvohomeClient]:
+    from .helpers import instantiate_client_v2  # HACK: to avoid circular imports
+
+    return instantiate_client_v2(user_credentials, session)

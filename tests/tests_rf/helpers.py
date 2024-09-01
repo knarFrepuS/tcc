@@ -15,6 +15,7 @@ from evohomeasync2.client import TokenManager
 from evohomeasync2.const import URL_BASE as URL_BASE_2
 
 from .conftest import _DBG_DISABLE_STRICT_ASSERTS, TOKEN_CACHE, aiohttp
+from .const import ExitTestReason
 
 if TYPE_CHECKING:
     import voluptuous as vol
@@ -153,12 +154,18 @@ async def instantiate_client_v2(
     # Instantiation, NOTE: No API calls invoked during instantiation
     evo = ev2.EvohomeClient(_global_token_manager, session)
 
-    # Authentication - dont use evo.broker._login() as
+    # Authentication, +/- authorization
     if dont_login:
-        await evo.broker.token_manager._update_access_token()  # force token refresh
+        try:  # force a token refresh
+            await evo.broker.token_manager._update_access_token()
+        except ev2.AuthenticationFailedError as err:
+            pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+
     else:
-        await evo.login()  # will use cached tokens, if able
-        # will also call evo.user_account(), evo.installation()
+        try:  # will use cached tokens, if able
+            await evo.login()  # will also call evo.user_account(), evo.installation()
+        except ev2.AuthenticationFailedError as err:
+            pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
     await _global_token_manager.save_access_token()
 
