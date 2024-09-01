@@ -190,10 +190,8 @@ async def _test_task_id(evo: ev2.EvohomeClient) -> None:
 #######################################################################################
 
 
+@pytest.mark.skipif(not _DBG_USE_REAL_AIOHTTP, reason=ExitTestReason.NOT_IMPLEMENTED)
 async def _out_test_task_id(evo2: Awaitable[ev2.EvohomeClient]) -> None:
     """Test /location/{locationId}/status"""
-
-    if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
     await _test_task_id(await evo2)

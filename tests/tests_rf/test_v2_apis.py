@@ -24,6 +24,7 @@ from evohomeasync2.schema.schedule import SCH_PUT_SCHEDULE_DHW, SCH_PUT_SCHEDULE
 from . import faked_server as faked
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
 from .const import ExitTestReason
+from .helpers import instantiate_client_v2
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable
@@ -174,10 +175,15 @@ async def _test_system_apis(evo: ev2.EvohomeClient) -> None:
 #######################################################################################
 
 
-async def test_basics(evo2: Awaitable[ev2.EvohomeClient]) -> None:
+async def test_basics(
+    user_credentials: tuple[str, str],
+    session: aiohttp.ClientSession | faked.ClientSession,
+) -> None:
     """Test authentication, `user_account()` and `installation()`."""
 
-    await _test_basics_apis(await evo2)
+    await _test_basics_apis(
+        await instantiate_client_v2(user_credentials, session, dont_login=True)
+    )
 
 
 async def test_sched_(evo2: Awaitable[ev2.EvohomeClient]) -> None:

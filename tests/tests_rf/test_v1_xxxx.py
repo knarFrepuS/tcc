@@ -8,14 +8,14 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-import evohomeasync as ev1
-
 from .conftest import _DBG_USE_REAL_AIOHTTP
 from .const import ExitTestReason
 from .helpers import should_fail_v1, should_work_v1
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable
+
+    import evohomeasync as ev1
 
 
 #######################################################################################
@@ -961,25 +961,15 @@ async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
 #######################################################################################
 
 
+@pytest.mark.skipif(not _DBG_USE_REAL_AIOHTTP, reason=ExitTestReason.NOT_IMPLEMENTED)
 async def test_locations(evo1: Awaitable[ev1.EvohomeClient]) -> None:
     """Test /locations"""
 
-    if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
-
-    try:
-        await _test_url_locations(await evo1)
-    except ev1.AuthenticationFailedError as err:
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_url_locations(await evo1)
 
 
+@pytest.mark.skipif(not _DBG_USE_REAL_AIOHTTP, reason=ExitTestReason.NOT_IMPLEMENTED)
 async def test_client_apis(evo1: Awaitable[ev1.EvohomeClient]) -> None:
     """Test _populate_user_data() & _populate_full_data()"""
 
-    if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
-
-    try:
-        await _test_client_apis(await evo1)
-    except ev1.AuthenticationFailedError as err:
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_client_apis(await evo1)
