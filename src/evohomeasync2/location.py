@@ -33,6 +33,10 @@ if TYPE_CHECKING:
 class _LocationDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
+    @property
+    def locationId(self) -> NoReturn:  # noqa: N802
+        raise exc.DeprecationError(f"{self}: .locationId is deprecated, use .id")
+
     async def status(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .status() is deprecated, use .refresh_status()"

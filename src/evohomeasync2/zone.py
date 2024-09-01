@@ -125,6 +125,10 @@ class ActiveFaultsBase(EntityBase):
 class _ZoneBaseDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
+    @property
+    def zoneId(self) -> NoReturn:  # noqa: N802
+        raise exc.DeprecationError(f"{self}: .zoneId is deprecated, use .id")
+
     async def schedule(self) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .schedule() is deprecrated, use .get_schedule()"

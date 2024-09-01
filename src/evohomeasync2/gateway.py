@@ -3,8 +3,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Final, NoReturn
 
+from . import exceptions as exc
 from .schema import SCH_GWY_STATUS
 from .schema.const import (
     SZ_GATEWAY,
@@ -25,7 +26,15 @@ if TYPE_CHECKING:
     from .schema import _EvoDictT
 
 
-class Gateway(ActiveFaultsBase, EntityBase):
+class _GatewayDeprecated:  # pragma: no cover
+    """Deprecated attributes and methods removed from the evohome-client namespace."""
+
+    @property
+    def systemId(self) -> NoReturn:  # noqa: N802
+        raise exc.DeprecationError(f"{self}: .gatewayId is deprecated, use .id")
+
+
+class Gateway(_GatewayDeprecated, ActiveFaultsBase, EntityBase):
     """Instance of a location's gateway."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_GWY_STATUS

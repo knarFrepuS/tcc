@@ -54,6 +54,10 @@ if TYPE_CHECKING:
 class _SystemDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
+    @property
+    def systemId(self) -> NoReturn:  # noqa: N802
+        raise exc.DeprecationError(f"{self}: .systemId is deprecated, use .id")
+
     async def set_status_reset(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .set_status_reset() is deprecrated, use .reset_mode()"

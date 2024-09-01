@@ -37,10 +37,6 @@ if TYPE_CHECKING:
 class _HotWaterDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
-    @property
-    def zoneId(self) -> NoReturn:  # noqa: N802
-        raise exc.DeprecationError(f"{self}: .zoneId is deprecated, use .id")
-
     async def get_dhw_state(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
             f"{self}: .get_dhw_state() is deprecated, use Location.refresh_status()"

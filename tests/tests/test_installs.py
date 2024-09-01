@@ -18,6 +18,9 @@ if TYPE_CHECKING:
     from pytest_snapshot.plugin import Snapshot  # type: ignore[import-untyped]
 
 
+_DEPRECATED_ATTRS = ("locationId", "gatewayId", "systemId", "zoneId", "zone_type")
+
+
 def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
     folders = [
         p.name
@@ -36,7 +39,7 @@ async def test_system_snapshot(  # type: ignore[no-any-unimported]
         return {
             attr: getattr(obj, attr)
             for attr in get_property_methods(obj)
-            if attr not in ("zoneId", "zone_type")  # excl. deprecated attrs
+            if attr not in _DEPRECATED_ATTRS
         }
 
     with patch("evohomeasync2.broker.Broker.get", broker_get(install)):
