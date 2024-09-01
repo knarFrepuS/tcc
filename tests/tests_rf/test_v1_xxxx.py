@@ -18,73 +18,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable
 
 
-async def _test_url_locations(evo: ev1.EvohomeClient) -> None:
-    # evo.broker._headers["sessionId"] = evo.user_info["sessionId"]  # what is this?
-    user_id: int = evo.user_info["userID"]  # type: ignore[assignment]
-
-    assert evo.broker.session_id
-
-    url = f"locations?userId={user_id}&allData=True"
-    _ = await should_work_v1(evo, HTTPMethod.GET, url)
-
-    # why isn't this one METHOD_NOT_ALLOWED?
-    _ = await should_fail_v1(evo, HTTPMethod.PUT, url, status=HTTPStatus.NOT_FOUND)
-
-    url = f"locations?userId={user_id}"
-    _ = await should_work_v1(evo, HTTPMethod.GET, url)
-
-    url = "locations?userId=123456"
-    _ = await should_fail_v1(evo, HTTPMethod.GET, url, status=HTTPStatus.UNAUTHORIZED)
-
-    url = "locations?userId='123456'"
-    _ = await should_fail_v1(evo, HTTPMethod.GET, url, status=HTTPStatus.BAD_REQUEST)
-
-    url = "xxxxxxx"  # NOTE: a general test, not a test specific to the 'locations' URL
-    _ = await should_fail_v1(
-        evo,
-        HTTPMethod.GET,
-        url,
-        status=HTTPStatus.NOT_FOUND,
-        content_type="text/html",  # not the usual content-type
-    )
-
-
-async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
-    """Instantiate a client, and logon to the vendor API."""
-
-    user_data = await evo._populate_user_data()
-    assert user_data  # aka evo.user_data
-
-    assert evo.user_info
-
-    await evo._populate_locn_data()
-
-    temps = await evo.get_temperatures()
-    assert temps
-
-
-async def test_locations(evo2: Awaitable[ev1.EvohomeClient]) -> None:
-    """Test /locations"""
-
-    if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
-
-    try:
-        await _test_url_locations(await evo2)
-    except ev1.AuthenticationFailedError as err:
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
-
-
-async def test_client_apis(evo2: Awaitable[ev1.EvohomeClient]) -> None:
-    """Test _populate_user_data() & _populate_full_data()"""
-
-    if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
-
-    try:
-        await _test_client_apis(await evo2)
-    except ev1.AuthenticationFailedError as err:
-        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+#######################################################################################
 
 
 USER_DATA = {
@@ -977,3 +911,75 @@ FULL_DATA = {
         "monitoring": {"levelOfAccess": "Partial", "contactPreferences": []},
     },
 }
+
+
+async def _test_url_locations(evo: ev1.EvohomeClient) -> None:
+    # evo.broker._headers["sessionId"] = evo.user_info["sessionId"]  # what is this?
+    user_id: int = evo.user_info["userID"]  # type: ignore[assignment]
+
+    assert evo.broker.session_id
+
+    url = f"locations?userId={user_id}&allData=True"
+    _ = await should_work_v1(evo, HTTPMethod.GET, url)
+
+    # why isn't this one METHOD_NOT_ALLOWED?
+    _ = await should_fail_v1(evo, HTTPMethod.PUT, url, status=HTTPStatus.NOT_FOUND)
+
+    url = f"locations?userId={user_id}"
+    _ = await should_work_v1(evo, HTTPMethod.GET, url)
+
+    url = "locations?userId=123456"
+    _ = await should_fail_v1(evo, HTTPMethod.GET, url, status=HTTPStatus.UNAUTHORIZED)
+
+    url = "locations?userId='123456'"
+    _ = await should_fail_v1(evo, HTTPMethod.GET, url, status=HTTPStatus.BAD_REQUEST)
+
+    url = "xxxxxxx"  # NOTE: a general test, not a test specific to the 'locations' URL
+    _ = await should_fail_v1(
+        evo,
+        HTTPMethod.GET,
+        url,
+        status=HTTPStatus.NOT_FOUND,
+        content_type="text/html",  # not the usual content-type
+    )
+
+
+async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
+    """Instantiate a client, and logon to the vendor API."""
+
+    user_data = await evo._populate_user_data()
+    assert user_data  # aka evo.user_data
+
+    assert evo.user_info
+
+    await evo._populate_locn_data()
+
+    temps = await evo.get_temperatures()
+    assert temps
+
+
+#######################################################################################
+
+
+async def test_locations(evo1: Awaitable[ev1.EvohomeClient]) -> None:
+    """Test /locations"""
+
+    if not _DBG_USE_REAL_AIOHTTP:
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
+
+    try:
+        await _test_url_locations(await evo1)
+    except ev1.AuthenticationFailedError as err:
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+
+
+async def test_client_apis(evo1: Awaitable[ev1.EvohomeClient]) -> None:
+    """Test _populate_user_data() & _populate_full_data()"""
+
+    if not _DBG_USE_REAL_AIOHTTP:
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
+
+    try:
+        await _test_client_apis(await evo1)
+    except ev1.AuthenticationFailedError as err:
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

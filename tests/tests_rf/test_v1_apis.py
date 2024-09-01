@@ -16,6 +16,9 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable
 
 
+#######################################################################################
+
+
 async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
     """Instantiate a client, and logon to the vendor API."""
 
@@ -34,13 +37,16 @@ async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
     #     _ = await evo.get_temperatures()
 
 
-async def test_client_apis(evo2: Awaitable[ev1.EvohomeClient]) -> None:
+#######################################################################################
+
+
+async def test_client_apis(evo1: Awaitable[ev1.EvohomeClient]) -> None:
     """Test _populate_user_data() & _populate_full_data()"""
 
     if not _DBG_USE_REAL_AIOHTTP:
         pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
     try:
-        await _test_client_apis(await evo2)
+        await _test_client_apis(await evo1)
     except ev1.AuthenticationFailedError as err:
         pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

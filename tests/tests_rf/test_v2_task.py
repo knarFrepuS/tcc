@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     import evohomeasync2 as ev2
     from evohomeasync2 import Gateway, Location, System
 
+
 #######################################################################################
 
 
