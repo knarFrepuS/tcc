@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 import evohomeasync as evo1
-import evohomeasync2 as evo2
+import evohomeasync2 as ev2
 from evohomeasync2.client import TokenManager
 from evohomeasync2.const import URL_BASE as URL_BASE_2
 
@@ -135,7 +135,7 @@ async def instantiate_client_v2(
     session: aiohttp.ClientSession,
     *,
     dont_login: bool = False,
-) -> evo2.EvohomeClient:
+) -> ev2.EvohomeClient:
     """Instantiate a client, and logon to the vendor API (cache any tokens)."""
 
     global _global_token_manager  # noqa: PLW0603
@@ -151,7 +151,7 @@ async def instantiate_client_v2(
     await _global_token_manager.restore_access_token()
 
     # Instantiation, NOTE: No API calls invoked during instantiation
-    evo = evo2.EvohomeClient(_global_token_manager, session)
+    evo = ev2.EvohomeClient(_global_token_manager, session)
 
     # Authentication - dont use evo.broker._login() as
     if dont_login:
@@ -166,7 +166,7 @@ async def instantiate_client_v2(
 
 
 async def should_work(  # noqa: PLR0913
-    evo: evo2.EvohomeClient,
+    evo: ev2.EvohomeClient,
     method: HTTPMethod,
     url: str,
     /,
@@ -198,7 +198,7 @@ async def should_work(  # noqa: PLR0913
 
 
 async def should_fail(  # noqa: PLR0913
-    evo: evo2.EvohomeClient,
+    evo: ev2.EvohomeClient,
     method: HTTPMethod,
     url: str,
     /,
@@ -256,7 +256,7 @@ async def should_fail(  # noqa: PLR0913
     return content
 
 
-async def wait_for_comm_task_v2(evo: evo2.EvohomeClient, task_id: str) -> bool | None:
+async def wait_for_comm_task_v2(evo: ev2.EvohomeClient, task_id: str) -> bool | None:
     """Wait for a communication task (API call) to complete."""
 
     # invoke via:

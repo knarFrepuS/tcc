@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-import evohomeasync2 as evo2
+import evohomeasync2 as ev2
 from evohomeasync2.const import API_STRFTIME, SystemMode, ZoneMode
 from evohomeasync2.schema import (
     SCH_FULL_CONFIG,
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 #######################################################################################
 
 
-async def _test_usr_account(evo: evo2.EvohomeClient) -> None:
+async def _test_usr_account(evo: ev2.EvohomeClient) -> None:
     """Test /userAccount"""
 
     url = "userAccount"
@@ -66,7 +66,7 @@ async def _test_usr_account(evo: evo2.EvohomeClient) -> None:
     )
 
 
-async def _test_all_config(evo: evo2.EvohomeClient) -> None:
+async def _test_all_config(evo: ev2.EvohomeClient) -> None:
     """Test /location/installationInfo?userId={userId}"""
 
     _ = await evo.user_account()
@@ -93,7 +93,7 @@ async def _test_all_config(evo: evo2.EvohomeClient) -> None:
     _ = await should_fail(evo, HTTPMethod.GET, url, status=HTTPStatus.NOT_FOUND)
 
 
-async def _test_loc_status(evo: evo2.EvohomeClient) -> None:
+async def _test_loc_status(evo: ev2.EvohomeClient) -> None:
     """Test /location/{locationId}/status"""
 
     _ = await evo.user_account()
@@ -135,13 +135,13 @@ async def _test_loc_status(evo: evo2.EvohomeClient) -> None:
     )
 
 
-async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
+async def _test_tcs_mode(evo: ev2.EvohomeClient) -> None:
     """Test /temperatureControlSystem/{systemId}/mode"""
 
     _ = await evo.user_account()
     _ = await evo._installation(refresh_status=False)
 
-    tcs: evo2.System
+    tcs: ev2.System
 
     if not (tcs := evo.locations[0].gateways[0].systems[0]):
         pytest.skip(ExitTestReason.NO_TESTABLE_ZONE)
@@ -196,7 +196,7 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
     )
 
 
-async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
+async def _test_zone_mode(evo: ev2.EvohomeClient) -> None:
     """Test /temperatureZone/{zoneId}/heatSetpoint"""
 
     _ = await evo.user_account()
@@ -252,7 +252,7 @@ async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
 
 # TODO: Test sending bad schedule
 # TODO: Try with/without convert_to_put_schedule()
-async def _test_schedule(evo: evo2.EvohomeClient) -> None:
+async def _test_schedule(evo: ev2.EvohomeClient) -> None:
     """Test /{x.TYPE}/{x._id}/schedule (of a zone)"""
 
     _ = await evo.user_account()
@@ -312,7 +312,7 @@ async def test_usr_account(
     try:
         await _test_usr_account(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -327,7 +327,7 @@ async def test_all_config(
     try:
         await _test_all_config(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -342,7 +342,7 @@ async def test_loc_status(
     try:
         await _test_loc_status(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -357,7 +357,7 @@ async def test_tcs_mode(
     try:
         await _test_tcs_mode(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -377,7 +377,7 @@ async def test_zone_mode(
     try:
         await _test_zone_mode(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -397,7 +397,7 @@ async def test_schedule(
     try:
         await _test_schedule(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

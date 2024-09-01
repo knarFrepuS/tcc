@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import yaml
 
-import evohomeasync2 as evo2
+import evohomeasync2 as ev2
 
 from .conftest import FIXTURES_DIR, TokenManager, broker_get
 from .helpers import get_property_methods
@@ -43,7 +43,7 @@ async def test_system_snapshot(  # type: ignore[no-any-unimported]
         }
 
     with patch("evohomeasync2.broker.Broker.get", broker_get(install)):
-        evo = evo2.EvohomeClient(token_manager, token_manager.websession)
+        evo = ev2.EvohomeClient(token_manager, token_manager.websession)
 
         await evo.login()
 

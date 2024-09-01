@@ -7,7 +7,7 @@ from datetime import datetime as dt
 
 import pytest
 
-import evohomeasync2 as evo2
+import evohomeasync2 as ev2
 from evohomeasync2.schema import (
     SCH_DHW_STATUS,
     SCH_FULL_CONFIG,
@@ -28,7 +28,7 @@ from .helpers import instantiate_client_v2
 #######################################################################################
 
 
-async def _test_basics_apis(evo: evo2.EvohomeClient) -> None:
+async def _test_basics_apis(evo: ev2.EvohomeClient) -> None:
     """Test authentication, `user_account()` and `installation()`."""
 
     #
@@ -96,7 +96,7 @@ async def _test_basics_apis(evo: evo2.EvohomeClient) -> None:
         assert SCH_LOCN_STATUS(loc_status)
 
 
-async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
+async def _test_sched__apis(evo: ev2.EvohomeClient) -> None:
     """Test `get_schedule()` and `get_schedule()`."""
 
     #
@@ -119,13 +119,13 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
     if child := evo.default_system().zone_by_id.get(faked.GHOST_ZONE_ID):
         try:
             schedule = await child.get_schedule()
-        except evo2.InvalidScheduleError:
+        except ev2.InvalidScheduleError:
             pass
         else:
             pytest.fail("Expected InvalidScheduleError, but wasn't raised")
 
 
-async def _test_status_apis(evo: evo2.EvohomeClient) -> None:
+async def _test_status_apis(evo: ev2.EvohomeClient) -> None:
     """Test `_refresh_status()` for DHW/zone."""
 
     #
@@ -144,7 +144,7 @@ async def _test_status_apis(evo: evo2.EvohomeClient) -> None:
         assert SCH_ZONE_STATUS(zone_status)
 
 
-async def _test_system_apis(evo: evo2.EvohomeClient) -> None:
+async def _test_system_apis(evo: ev2.EvohomeClient) -> None:
     """Test `set_mode()` for TCS."""
 
     #
@@ -156,7 +156,7 @@ async def _test_system_apis(evo: evo2.EvohomeClient) -> None:
     # STEP 2: GET /{_type}/{_id}/status
     try:
         tcs = evo.default_system()
-    except evo2.NoSingleTcsError:
+    except ev2.NoSingleTcsError:
         tcs = evo.locations[0].gateways[0].systems[0]
 
     mode = tcs.system_mode_status[SZ_MODE]
@@ -182,7 +182,7 @@ async def test_basics(
             await instantiate_client_v2(user_credentials, session, dont_login=True)
         )
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -197,7 +197,7 @@ async def test_sched_(
     try:
         await _test_sched__apis(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -212,7 +212,7 @@ async def test_status(
     try:
         await _test_status_apis(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
@@ -227,7 +227,7 @@ async def test_system(
     try:
         await _test_system_apis(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError as err:
+    except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
         pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

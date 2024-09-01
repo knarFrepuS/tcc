@@ -5,14 +5,14 @@ from __future__ import annotations
 
 import pytest
 
-import evohomeasync as evohome
+import evohomeasync as ev1
 
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
 from .const import ExitTestReason
 from .helpers import instantiate_client_v1
 
 
-async def _test_client_apis(evo: evohome.EvohomeClient) -> None:
+async def _test_client_apis(evo: ev1.EvohomeClient) -> None:
     """Instantiate a client, and logon to the vendor API."""
 
     user_data = await evo._populate_user_data()
@@ -42,5 +42,5 @@ async def test_client_apis(
         await _test_client_apis(
             await instantiate_client_v1(*user_credentials, session=session)
         )
-    except evohome.AuthenticationFailedError as err:
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    except ev1.AuthenticationFailedError as err:
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
