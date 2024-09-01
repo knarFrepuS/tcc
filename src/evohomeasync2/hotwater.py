@@ -62,7 +62,7 @@ class HotWater(_HotWaterDeprecated, _ZoneBase, EntityBase):
     """Instance of a TCS's DHW zone (domesticHotWater)."""
 
     STATUS_SCHEMA: Final = SCH_DHW_STATUS  # type: ignore[misc]
-    TYPE: Final = SZ_DOMESTIC_HOT_WATER  # type: ignore[misc]
+    TYPE: Final = SZ_DOMESTIC_HOT_WATER  # type: ignore[misc]  # used for RESTful API calls
 
     SCH_SCHEDULE_GET: Final[vol.Schema] = SCH_GET_SCHEDULE_DHW  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final[vol.Schema] = SCH_PUT_SCHEDULE_DHW  # type: ignore[misc]

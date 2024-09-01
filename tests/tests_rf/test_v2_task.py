@@ -94,7 +94,7 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     new_mode = {
         SZ_MODE: ZoneMode.TEMPORARY_OVERRIDE,
         SZ_STATE: DhwState.ON,
-        SZ_UNTIL_TIME: (dt.now() + td(hours=1)).strftime(API_STRFTIME),
+        SZ_UNTIL_TIME: (dt.now().astimezone() + td(hours=1)).strftime(API_STRFTIME),
     }
 
     result = await should_work(evo, HTTPMethod.PUT, put_url, json=new_mode)
@@ -118,7 +118,7 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     new_mode = {
         SZ_MODE: ZoneMode.TEMPORARY_OVERRIDE,
         SZ_STATE: DhwState.ON,
-        SZ_UNTIL_TIME: (dt.now() + td(hours=1)).strftime(API_STRFTIME),
+        SZ_UNTIL_TIME: (dt.now().astimezone() + td(hours=1)).strftime(API_STRFTIME),
     }
     _ = await should_work(evo, HTTPMethod.PUT, put_url, json=new_mode)  # HTTP 201
 
@@ -129,7 +129,9 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     new_mode = {  # NOTE: different capitalisation, until time
         pascal_case(SZ_MODE): ZoneMode.TEMPORARY_OVERRIDE,
         pascal_case(SZ_STATE): DhwState.ON,
-        pascal_case(SZ_UNTIL_TIME): (dt.now() + td(hours=2)).strftime(API_STRFTIME),
+        pascal_case(SZ_UNTIL_TIME): (dt.now().astimezone() + td(hours=2)).strftime(
+            API_STRFTIME
+        ),
     }
     _ = await should_work(evo, HTTPMethod.PUT, put_url, json=new_mode)
     _ = await wait_for_comm_task(evo, task_id)

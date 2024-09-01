@@ -166,9 +166,9 @@
     "C90",  #   mcabe
     "COM",  #   flake8-commas
 #   "D",  #     pydocstyle  # a big job
-#   "DTZ",  #   flake8-datetimez
+    "DTZ",  #   flake8-datetimez                 # desirable
     "E",  #     pycodestyle
-#   "EM",  #    flake8-errmsg
+    "EM",  #    flake8-errmsg
     "EXE",  #   flake8-executable
     "F",  #     Pyflakes
     "FA",  #    flake8-future-annotations
@@ -210,6 +210,8 @@
     "G004",  #   Logging statement uses f-string
     "E501",  #   Line too long
     "EXE001",  # Shebang is present but file is not executable
+    "EM101",  #  Exception must not use a string literal
+    "EM102",  #  Exception must not use an f-string literal
     "S101",  #   Use of assert detected
     "SIM102",  # Use a single `if` statement instead of nested `if` statements
     "SIM114",  # Combine `if` branches using logical `or` operator

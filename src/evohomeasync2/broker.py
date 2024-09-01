@@ -109,13 +109,15 @@ class AbstractTokenManager(ABC):
     def _token_data_reset(self) -> None:
         """Reset the token data to its falsy state."""
         self.access_token = ""
-        self.access_token_expires = dt.min
+        self.access_token_expires = dt.now().astimezone().replace(year=1901)
         self.refresh_token = ""
 
     def _token_data_from_api(self, tokens: OAuthTokenData) -> None:
         """Convert the token data from the vendor's API to the internal format."""
         self.access_token = tokens[SZ_ACCESS_TOKEN]
-        self.access_token_expires = dt.now() + td(seconds=tokens[SZ_EXPIRES_IN] - 15)
+        self.access_token_expires = dt.now().astimezone() + td(
+            seconds=tokens[SZ_EXPIRES_IN] - 15
+        )
         self.refresh_token = tokens[SZ_REFRESH_TOKEN]
 
     def _token_data_from_dict(self, tokens: _EvoTokenData) -> None:
@@ -135,7 +137,10 @@ class AbstractTokenManager(ABC):
 
     def is_token_data_valid(self) -> bool:
         """Return True if we have a valid access token."""
-        return bool(self.access_token) and self.access_token_expires > dt.now()
+        return (
+            bool(self.access_token)
+            and self.access_token_expires > dt.now().astimezone()
+        )
 
     async def fetch_access_token(self) -> str:  # HA api
         """Return a valid access token.

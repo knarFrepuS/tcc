@@ -158,7 +158,7 @@ class TokenManager(AbstractTokenManager):
         token_cache = {
             k: v
             for k, v in token_cache.items()
-            if v[SZ_ACCESS_TOKEN_EXPIRES] > dt.now().isoformat()
+            if v[SZ_ACCESS_TOKEN_EXPIRES] > dt.now().astimezone().isoformat()
         }
 
         content = json.dumps(

@@ -174,7 +174,7 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
     new_mode = {
         SZ_SYSTEM_MODE: SystemMode.AWAY,
         SZ_PERMANENT: True,
-        SZ_TIME_UNTIL: (dt.now() + td(hours=1)).strftime(API_STRFTIME),
+        SZ_TIME_UNTIL: (dt.now().astimezone() + td(hours=1)).strftime(API_STRFTIME),
     }
     _ = await should_work(evo, HTTPMethod.PUT, url, json=new_mode)
 

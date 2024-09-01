@@ -17,7 +17,7 @@ from .schema.const import (
     SZ_TEMPERATURE_CONTROL_SYSTEMS,
 )
 from .system import System
-from .zone import ActiveFaultsBase, EntityBase
+from .zone import ActiveFaultsMixin, EntityBase
 
 if TYPE_CHECKING:
     import voluptuous as vol
@@ -30,15 +30,15 @@ class _GatewayDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
     @property
-    def systemId(self) -> NoReturn:  # noqa: N802
+    def gatewayId(self) -> NoReturn:  # noqa: N802
         raise exc.DeprecationError(f"{self}: .gatewayId is deprecated, use .id")
 
 
-class Gateway(_GatewayDeprecated, ActiveFaultsBase, EntityBase):
+class Gateway(_GatewayDeprecated, ActiveFaultsMixin, EntityBase):
     """Instance of a location's gateway."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_GWY_STATUS
-    TYPE: Final = SZ_GATEWAY  # type: ignore[misc]
+    TYPE: Final = SZ_GATEWAY  # used for RESTful API calls
 
     def __init__(self, location: Location, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_GATEWAY_INFO][SZ_GATEWAY_ID], location)

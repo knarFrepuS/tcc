@@ -40,14 +40,14 @@ from .schema.const import (
     SZ_ZONE_ID,
     SZ_ZONES,
 )
-from .zone import ActiveFaultsBase, EntityBase, Zone
+from .zone import ActiveFaultsMixin, EntityBase, Zone
 
 if TYPE_CHECKING:
     from datetime import datetime as dt
 
     import voluptuous as vol
 
-    from . import Gateway, Location
+    from . import Gateway
     from .schema import _DhwIdT, _EvoDictT, _EvoListT, _ScheduleT, _ZoneIdT
 
 
@@ -119,17 +119,17 @@ class _SystemDeprecated:  # pragma: no cover
         )
 
 
-class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
+class System(_SystemDeprecated, ActiveFaultsMixin, EntityBase):
     """Instance of a gateway's TCS (temperatureControlSystem)."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_TCS_STATUS
-    TYPE: Final = SZ_TEMPERATURE_CONTROL_SYSTEM  # type: ignore[misc]
+    TYPE: Final = SZ_TEMPERATURE_CONTROL_SYSTEM  # used for RESTful API calls
 
     def __init__(self, gateway: Gateway, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_SYSTEM_ID], gateway)
 
         self.gateway = gateway
-        self.location: Location = gateway.location
+        self.location = gateway.location
 
         self._config: Final[_EvoDictT] = {
             k: v for k, v in config.items() if k not in (SZ_DHW, SZ_ZONES)

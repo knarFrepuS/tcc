@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta as td, timezone
 from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 from . import exceptions as exc
@@ -10,6 +11,7 @@ from .gateway import Gateway
 from .schema import SCH_LOCN_STATUS
 from .schema.const import (
     SZ_COUNTRY,
+    SZ_CURRENT_OFFSET_MINUTES,
     SZ_GATEWAY_ID,
     SZ_GATEWAYS,
     SZ_LOCATION,
@@ -47,7 +49,7 @@ class Location(_LocationDeprecated, EntityBase):
     """Instance of an account's location."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_LOCN_STATUS
-    TYPE: Final = SZ_LOCATION
+    TYPE: Final = SZ_LOCATION  # used for RESTful API calls
 
     def __init__(self, client: EvohomeClient, config: _EvoDictT, /) -> None:
         super().__init__(
@@ -61,6 +63,9 @@ class Location(_LocationDeprecated, EntityBase):
 
         self._config: Final[_EvoDictT] = config[SZ_LOCATION_INFO]
         self._status: _EvoDictT = {}
+
+        # NOTE: the TZ of the evohome location, not of this system
+        self._tz = timezone(td(minutes=self.time_zone[SZ_CURRENT_OFFSET_MINUTES]))
 
         self.gateways: list[Gateway] = []
         self.gateway_by_id: dict[str, Gateway] = {}

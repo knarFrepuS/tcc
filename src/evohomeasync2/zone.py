@@ -72,8 +72,8 @@ class EntityBase:
         return f"{self.__class__.__name__}(id='{self.id}')"
 
 
-class ActiveFaultsBase(EntityBase):
-    TYPE: _DhwIdT | _ZoneIdT  # "temperatureZone", "domesticHotWater"
+class ActiveFaultsMixin(EntityBase):
+    """Provide the base for ActiveFaultsMixin."""
 
     def __init__(self, child_id: str, parent: EntityBase, /) -> None:
         super().__init__(child_id, parent._broker, parent._logger)  # noqa: SLF001
@@ -85,12 +85,8 @@ class ActiveFaultsBase(EntityBase):
     def active_faults(self) -> _EvoListT:
         return self._active_faults
 
-    @active_faults.setter
-    def active_faults(self, value: _EvoListT) -> None:
-        self._active_faults = value
-
     def _update_status(self, status: _EvoDictT) -> None:
-        last_logged = {}
+        self._active_faults, old_faults = status[SZ_ACTIVE_FAULTS], self._active_faults
 
         def hash_(fault: _EvoDictT) -> str:
             return f"{fault[SZ_FAULT_TYPE]}_{fault[SZ_SINCE]}"
@@ -99,7 +95,7 @@ class ActiveFaultsBase(EntityBase):
             self._logger.warning(
                 f"Active fault: {self}: {fault[SZ_FAULT_TYPE]}, since {fault[SZ_SINCE]}"
             )
-            last_logged[hash_(fault)] = dt.now()
+            self._last_logged[hash_(fault)] = dt.now().astimezone()
 
         def log_as_resolved(fault: _EvoDictT) -> None:
             self._logger.info(
@@ -107,19 +103,17 @@ class ActiveFaultsBase(EntityBase):
             )
             del self._last_logged[hash_(fault)]
 
-        for fault in status[SZ_ACTIVE_FAULTS]:
-            if fault not in self.active_faults:  # new active fault
+        for fault in self._active_faults:
+            if fault not in old_faults:  # is a new fault
                 log_as_active(fault)
 
-        for fault in self.active_faults:
-            if fault not in status[SZ_ACTIVE_FAULTS]:  # fault resolved
+        for fault in old_faults:
+            if fault not in self._active_faults:  # fault has resolved
                 log_as_resolved(fault)
 
-            elif dt.now() - self._last_logged[hash_(fault)] > _ONE_DAY:
+            # re-log active faults that haven't been logged in the last 24 hours
+            elif self._last_logged[hash_(fault)] < dt.now().astimezone() - _ONE_DAY:
                 log_as_active(fault)
-
-        self.active_faults = status[SZ_ACTIVE_FAULTS]
-        self._last_logged |= last_logged
 
 
 class _ZoneBaseDeprecated:  # pragma: no cover
@@ -135,10 +129,11 @@ class _ZoneBaseDeprecated:  # pragma: no cover
         )
 
 
-class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsBase, EntityBase):
+class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
     """Provide the base for temperatureZone / domesticHotWater Zones."""
 
     STATUS_SCHEMA: Final[vol.Schema]  # type: ignore[misc]
+    TYPE: _DhwIdT | _ZoneIdT  # "temperatureZone", "domesticHotWater"
 
     SCH_SCHEDULE_GET: Final[vol.Schema]  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final[vol.Schema]  # type: ignore[misc]
@@ -258,7 +253,7 @@ class Zone(_ZoneDeprecated, _ZoneBase, EntityBase):
     """Instance of a TCS's heating zone (temperatureZone)."""
 
     STATUS_SCHEMA: Final = SCH_ZONE_STATUS  # type: ignore[misc]
-    TYPE: Final = SZ_TEMPERATURE_ZONE  # type: ignore[misc]
+    TYPE: Final = SZ_TEMPERATURE_ZONE  # type: ignore[misc]  # used for RESTful API calls
 
     SCH_SCHEDULE_GET: Final = SCH_GET_SCHEDULE_ZONE  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final = SCH_PUT_SCHEDULE_ZONE  # type: ignore[misc]
