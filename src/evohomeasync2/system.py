@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     import voluptuous as vol
 
     from . import Gateway, Location
-    from .schema import _DhwIdT, _EvoDictT, _EvoListT, _ScheduleT, _SystemIdT, _ZoneIdT
+    from .schema import _DhwIdT, _EvoDictT, _EvoListT, _ScheduleT, _ZoneIdT
 
 
 class _SystemDeprecated:  # pragma: no cover
@@ -146,16 +146,12 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
                 )
             else:
                 self.zones.append(zone)
-                self.zone_by_id[zone.zone_id] = zone
+                self.zone_by_id[zone.id] = zone
 
         dhw_config: _EvoDictT
         if dhw_config := config.get(SZ_DHW):  # type: ignore[assignment]
             self.hotwater = HotWater(self, dhw_config)
-            self.zone_by_id[self.hotwater.dhw_id] = self.hotwater
-
-    @property
-    def system_id(self) -> _SystemIdT:
-        return self.id
+            self.zone_by_id[self.hotwater.id] = self.hotwater
 
     @property
     def allowed_system_modes(self) -> _EvoListT:
@@ -177,7 +173,7 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
         self._status = status
 
         if dhw_status := self._status.get(SZ_DHW):
-            if self.hotwater and self.hotwater.dhw_id == dhw_status[SZ_DHW_ID]:
+            if self.hotwater and self.hotwater.id == dhw_status[SZ_DHW_ID]:
                 self.hotwater._update_status(dhw_status)  # noqa: SLF001
 
             else:
@@ -280,7 +276,7 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
         if dhw := self.hotwater:
             dhw_status = {
                 SZ_THERMOSTAT: "DOMESTIC_HOT_WATER",
-                SZ_ID: dhw.dhw_id,
+                SZ_ID: dhw.id,
                 SZ_NAME: dhw.name,
                 SZ_TEMP: None,
             }
@@ -296,7 +292,7 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
         for zone in self.zones:
             zone_status = {
                 SZ_THERMOSTAT: "EMEA_ZONE",
-                SZ_ID: zone.zone_id,
+                SZ_ID: zone.id,
                 SZ_NAME: zone.name,
                 SZ_SETPOINT: None,
                 SZ_TEMP: None,
@@ -330,19 +326,19 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
             return {}
 
         self._logger.info(
-            f"Schedules: Backing up from {self.system_id} ({self.location.name})"
+            f"Schedules: Backing up from {self.id} ({self.location.name})"
         )
 
         schedules = {}
 
         for zone in self.zones:
-            schedules[zone.zone_id] = {
+            schedules[zone.id] = {
                 SZ_NAME: zone.name,
                 SZ_SCHEDULE: await get_schedule(zone),
             }
 
         if self.hotwater:
-            schedules[self.hotwater.dhw_id] = {
+            schedules[self.hotwater.id] = {
                 SZ_NAME: self.hotwater.name,
                 SZ_SCHEDULE: await get_schedule(self.hotwater),
             }
@@ -364,7 +360,7 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
 
             name = schedule.get(SZ_NAME)
 
-            if self.hotwater and self.hotwater.dhw_id == child_id:
+            if self.hotwater and self.hotwater.id == child_id:
                 await self.hotwater.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
             elif zone := self.zone_by_id.get(child_id):
@@ -403,7 +399,7 @@ class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
 
         self._logger.info(
             f"Schedules: Restoring (matched by {'name' if match_by_name else 'id'})"
-            f" to {self.system_id} ({self.location.name})"
+            f" to {self.id} ({self.location.name})"
         )
 
         with_errors = False

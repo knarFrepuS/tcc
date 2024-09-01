@@ -31,7 +31,6 @@
     temperature: null
     temperature_status:
         isAvailable: false
-    zone_id: '3432521'
 '3432576':
     active_faults: []
     allowed_setpoint_modes: &id002
@@ -66,7 +65,6 @@
     temperature_status:
         isAvailable: true
         temperature: 17.0
-    zone_id: '3432576'
 '3432577':
     active_faults: []
     allowed_setpoint_modes: &id003
@@ -101,7 +99,6 @@
     temperature_status:
         isAvailable: true
         temperature: 20.5
-    zone_id: '3432577'
 '3432578':
     active_faults: []
     allowed_setpoint_modes: &id004
@@ -136,7 +133,6 @@
     temperature_status:
         isAvailable: true
         temperature: 20.0
-    zone_id: '3432578'
 '3432579':
     active_faults: []
     allowed_setpoint_modes: &id005
@@ -171,7 +167,6 @@
     temperature_status:
         isAvailable: true
         temperature: 17.5
-    zone_id: '3432579'
 '3432580':
     active_faults: []
     allowed_setpoint_modes: &id006
@@ -207,7 +202,6 @@
     temperature_status:
         isAvailable: true
         temperature: 21.0
-    zone_id: '3432580'
 '3449703':
     active_faults: []
     allowed_setpoint_modes: &id007
@@ -242,7 +236,6 @@
     temperature_status:
         isAvailable: true
         temperature: 19.5
-    zone_id: '3449703'
 '3449740':
     active_faults: []
     allowed_setpoint_modes: &id008
@@ -277,7 +270,6 @@
     temperature_status:
         isAvailable: true
         temperature: 19.0
-    zone_id: '3449740'
 '3450733':
     active_faults: []
     allowed_setpoint_modes: &id009
@@ -312,4 +304,3 @@
     temperature_status:
         isAvailable: true
         temperature: 15.0
-    zone_id: '3450733'

@@ -34,7 +34,6 @@ allowed_system_modes:
     timingMode: Period
     timingResolution: 1.00:00:00
 model_type: EvoTouch
-system_id: '3432522'
 system_mode: Auto
 system_mode_status:
     isPermanent: true

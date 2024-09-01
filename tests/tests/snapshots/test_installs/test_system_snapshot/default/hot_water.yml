@@ -3,7 +3,6 @@ allowed_modes: &id001
 - FollowSchedule
 - PermanentOverride
 - TemporaryOverride
-dhw_id: '3933910'
 dhw_state_capabilities_esponse:
     allowedModes: *id001
     allowedStates:

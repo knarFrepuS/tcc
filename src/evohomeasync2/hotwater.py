@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     import voluptuous as vol
 
     from . import System
-    from .schema import _DhwIdT, _EvoDictT, _EvoListT
+    from .schema import _EvoDictT, _EvoListT
 
 
 class _HotWaterDeprecated:  # pragma: no cover
@@ -39,9 +39,7 @@ class _HotWaterDeprecated:  # pragma: no cover
 
     @property
     def zoneId(self) -> NoReturn:  # noqa: N802
-        raise exc.DeprecationError(
-            f"{self}: .zoneId is deprecated, use .dhw_id (or ._id)"
-        )
+        raise exc.DeprecationError(f"{self}: .zoneId is deprecated, use .id")
 
     async def get_dhw_state(self, *args: Any, **kwargs: Any) -> NoReturn:
         raise exc.DeprecationError(
@@ -75,10 +73,6 @@ class HotWater(_HotWaterDeprecated, _ZoneBase, EntityBase):
 
     def __init__(self, tcs: System, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_DHW_ID], tcs, config)
-
-    @property
-    def dhw_id(self) -> _DhwIdT:
-        return self.id
 
     @property
     def dhw_state_capabilities_esponse(self) -> _EvoDictT:

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     import voluptuous as vol
 
     from . import Location
-    from .schema import _EvoDictT, _GatewayIdT
+    from .schema import _EvoDictT
 
 
 class Gateway(ActiveFaultsBase, EntityBase):
@@ -47,11 +47,7 @@ class Gateway(ActiveFaultsBase, EntityBase):
             tcs = System(self, tcs_config)
 
             self.systems.append(tcs)
-            self.system_by_id[tcs.system_id] = tcs
-
-    @property
-    def gateway_id(self) -> _GatewayIdT:
-        return self.id
+            self.system_by_id[tcs.id] = tcs
 
     @property
     def mac(self) -> str:

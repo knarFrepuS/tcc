@@ -271,7 +271,7 @@ class EvohomeClient(EvohomeClientDeprecated):
     @property
     def system_id(self) -> _SystemIdT:  # an evohome-client anachronism, deprecate?
         """Return the ID of the default TCS (assumes only one loc/gwy/TCS)."""
-        return self.default_system().system_id
+        return self.default_system().id
 
     async def reset_mode(self) -> None:
         """Reset the mode of the default TCS and its zones."""

@@ -58,5 +58,5 @@ async def test_system_snapshot(  # type: ignore[no-any-unimported]
     dhw = tcs.hotwater
     snapshot.assert_match(yaml.dump(obj_to_dict(dhw), indent=4), "hot_water.yml")
 
-    zones = {z.zone_id: obj_to_dict(z) for z in tcs.zones}
+    zones = {z.id: obj_to_dict(z) for z in tcs.zones}
     snapshot.assert_match(yaml.dump(zones, indent=4), "zones.yml")

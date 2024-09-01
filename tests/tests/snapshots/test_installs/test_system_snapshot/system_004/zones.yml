@@ -32,7 +32,6 @@
     temperature_status:
         isAvailable: true
         temperature: 21.5
-    zone_id: '3935922'
 '4368406':
     active_faults: []
     allowed_setpoint_modes: &id002
@@ -67,4 +66,3 @@
     temperature_status:
         isAvailable: true
         temperature: 23.0
-    zone_id: '4368406'

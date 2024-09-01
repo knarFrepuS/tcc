@@ -101,7 +101,7 @@ async def _test_loc_status(evo: evo2.EvohomeClient) -> None:
     _ = await evo._installation(refresh_status=False)
     loc = evo.locations[0]
 
-    url = f"location/{loc.location_id}/status"
+    url = f"location/{loc.id}/status"
     _ = await should_work(evo, HTTPMethod.GET, url)
 
     url += "?includeTemperatureControlSystems=True"
@@ -110,7 +110,7 @@ async def _test_loc_status(evo: evo2.EvohomeClient) -> None:
         evo, HTTPMethod.PUT, url, status=HTTPStatus.METHOD_NOT_ALLOWED
     )
 
-    url = f"location/{loc.location_id}"
+    url = f"location/{loc.id}"
     await should_fail(
         evo,
         HTTPMethod.GET,
@@ -125,7 +125,7 @@ async def _test_loc_status(evo: evo2.EvohomeClient) -> None:
     url = "location/xxxxxxx/status"
     _ = await should_fail(evo, HTTPMethod.GET, url, status=HTTPStatus.BAD_REQUEST)
 
-    url = f"location/{loc.location_id}/xxxxxxx"
+    url = f"location/{loc.id}/xxxxxxx"
     _ = await should_fail(
         evo,
         HTTPMethod.GET,

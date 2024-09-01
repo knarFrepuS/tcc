@@ -19,7 +19,6 @@ allowed_system_modes:
     canBeTemporary: false
     systemMode: HeatingOff
 model_type: EvoTouch
-system_id: '3935923'
 system_mode: Auto
 system_mode_status:
     isPermanent: true

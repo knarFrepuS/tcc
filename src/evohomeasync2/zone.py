@@ -281,10 +281,6 @@ class Zone(_ZoneDeprecated, _ZoneBase, EntityBase):
             )
 
     @property
-    def zone_id(self) -> _ZoneIdT:
-        return self.id
-
-    @property
     def model_type(self) -> str:
         ret: str = self._config[SZ_MODEL_TYPE]
         return ret

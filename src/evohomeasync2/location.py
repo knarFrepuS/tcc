@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     import voluptuous as vol
 
     from . import EvohomeClient
-    from .schema import _EvoDictT, _LocationIdT
+    from .schema import _EvoDictT
 
 
 class _LocationDeprecated:  # pragma: no cover
@@ -66,11 +66,7 @@ class Location(_LocationDeprecated, EntityBase):
             gwy = Gateway(self, gwy_config)
 
             self.gateways.append(gwy)
-            self.gateway_by_id[gwy.gateway_id] = gwy
-
-    @property
-    def location_id(self) -> _LocationIdT:
-        return self.id
+            self.gateway_by_id[gwy.id] = gwy
 
     @property
     def country(self) -> str:
