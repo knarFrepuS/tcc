@@ -40,7 +40,7 @@ from .schema.const import (
     SZ_ZONE_ID,
     SZ_ZONES,
 )
-from .zone import ActiveFaultsBase, Zone
+from .zone import ActiveFaultsBase, EntityBase, Zone
 
 if TYPE_CHECKING:
     from datetime import datetime as dt
@@ -51,7 +51,7 @@ if TYPE_CHECKING:
     from .schema import _DhwIdT, _EvoDictT, _EvoListT, _ScheduleT, _SystemIdT, _ZoneIdT
 
 
-class _ControlSystemDeprecated:  # pragma: no cover
+class _SystemDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
     async def set_status_reset(self, *args: Any, **kwargs: Any) -> NoReturn:
@@ -115,14 +115,14 @@ class _ControlSystemDeprecated:  # pragma: no cover
         )
 
 
-class System(ActiveFaultsBase, _ControlSystemDeprecated):
+class System(_SystemDeprecated, ActiveFaultsBase, EntityBase):
     """Instance of a gateway's TCS (temperatureControlSystem)."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_TCS_STATUS
     TYPE: Final = SZ_TEMPERATURE_CONTROL_SYSTEM  # type: ignore[misc]
 
     def __init__(self, gateway: Gateway, config: _EvoDictT, /) -> None:
-        super().__init__(config[SZ_SYSTEM_ID], gateway._broker, gateway._logger)  # noqa: SLF001
+        super().__init__(config[SZ_SYSTEM_ID], gateway)
 
         self.gateway = gateway
         self.location: Location = gateway.location
@@ -155,7 +155,7 @@ class System(ActiveFaultsBase, _ControlSystemDeprecated):
 
     @property
     def system_id(self) -> _SystemIdT:
-        return self._id
+        return self.id
 
     @property
     def allowed_system_modes(self) -> _EvoListT:
@@ -217,7 +217,7 @@ class System(ActiveFaultsBase, _ControlSystemDeprecated):
 
     async def _set_mode(self, mode: dict[str, str | bool]) -> None:
         """Set the TCS mode."""  # {'mode': 'Auto', 'isPermanent': True}
-        _ = await self._broker.put(f"{self.TYPE}/{self._id}/mode", json=mode)
+        _ = await self._broker.put(f"{self.TYPE}/{self.id}/mode", json=mode)
 
     async def reset_mode(self) -> None:
         """Set the TCS to auto mode (and DHW/all zones to FollowSchedule mode)."""
@@ -325,7 +325,7 @@ class System(ActiveFaultsBase, _ControlSystemDeprecated):
                 return await child.get_schedule()
             except exc.InvalidScheduleError:
                 self._logger.warning(
-                    f"Ignoring schedule of {child._id} ({child.name}): missing/invalid"  # noqa: SLF001
+                    f"Ignoring schedule of {child.id} ({child.name}): missing/invalid"
                 )
             return {}
 

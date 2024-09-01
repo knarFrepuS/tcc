@@ -58,8 +58,8 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     if dhw is None:
         pytest.skip(ExitTestReason.NO_TESTABLE_DHW)
 
-    get_url = f"{dhw.TYPE}/{dhw._id}/status"
-    put_url = f"{dhw.TYPE}/{dhw._id}/state"
+    get_url = f"{dhw.TYPE}/{dhw.id}/status"
+    put_url = f"{dhw.TYPE}/{dhw.id}/state"
 
     #
     # PART 0: Get initial state...

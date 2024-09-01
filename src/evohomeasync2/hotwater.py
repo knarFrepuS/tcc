@@ -23,7 +23,7 @@ from .schema.const import (
     DhwState,
     ZoneMode,
 )
-from .zone import _ZoneBase
+from .zone import EntityBase, _ZoneBase
 
 if TYPE_CHECKING:
     from datetime import datetime as dt
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from .schema import _DhwIdT, _EvoDictT, _EvoListT
 
 
-class HotWaterDeprecated:  # pragma: no cover
+class _HotWaterDeprecated:  # pragma: no cover
     """Deprecated attributes and methods removed from the evohome-client namespace."""
 
     @property
@@ -64,7 +64,7 @@ class HotWaterDeprecated:  # pragma: no cover
         )
 
 
-class HotWater(HotWaterDeprecated, _ZoneBase):
+class HotWater(_HotWaterDeprecated, _ZoneBase, EntityBase):
     """Instance of a TCS's DHW zone (domesticHotWater)."""
 
     STATUS_SCHEMA: Final = SCH_DHW_STATUS  # type: ignore[misc]
@@ -78,7 +78,7 @@ class HotWater(HotWaterDeprecated, _ZoneBase):
 
     @property
     def dhw_id(self) -> _DhwIdT:
-        return self._id
+        return self.id
 
     @property
     def dhw_state_capabilities_esponse(self) -> _EvoDictT:
@@ -123,7 +123,7 @@ class HotWater(HotWaterDeprecated, _ZoneBase):
 
     async def _set_mode(self, mode: dict[str, str | None]) -> None:
         """Set the DHW mode (state)."""
-        _ = await self._broker.put(f"{self.TYPE}/{self._id}/state", json=mode)
+        _ = await self._broker.put(f"{self.TYPE}/{self.id}/state", json=mode)
 
     async def reset_mode(self) -> None:
         """Cancel any override and allow the DHW to follow its schedule."""

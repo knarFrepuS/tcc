@@ -111,7 +111,7 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
         assert SCH_PUT_SCHEDULE_DHW(schedule)
         await dhw.set_schedule(schedule)
 
-    if (zone := evo.default_system().zones[0]) and zone._id != faked.GHOST_ZONE_ID:
+    if (zone := evo.default_system().zones[0]) and zone.id != faked.GHOST_ZONE_ID:
         schedule = await zone.get_schedule()
         assert SCH_PUT_SCHEDULE_ZONE(schedule)
         await zone.set_schedule(schedule)

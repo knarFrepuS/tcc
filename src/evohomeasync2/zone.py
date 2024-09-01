@@ -51,31 +51,35 @@ from .schema.const import (
 )
 
 if TYPE_CHECKING:
-    import logging
+    from logging import Logger
 
-    from . import Broker, System
+    from . import System
+    from .broker import Broker
     from .schema import _DhwIdT, _EvoDictT, _EvoListT, _ZoneIdT
 
 
 _ONE_DAY = td(days=1)
 
 
-class ActiveFaultsBase:
+class EntityBase:
+    def __init__(self, child_id: str, broker: Broker, logger: Logger, /) -> None:
+        self.id: Final = child_id
+
+        self._broker: Final = broker
+        self._logger: Final = logger
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}(id='{self.id}')"
+
+
+class ActiveFaultsBase(EntityBase):
     TYPE: _DhwIdT | _ZoneIdT  # "temperatureZone", "domesticHotWater"
 
-    def __init__(
-        self, child_id: _DhwIdT | _ZoneIdT, broker: Broker, logger: logging.Logger, /
-    ) -> None:
-        self._id: Final = child_id
-
-        self._broker = broker
-        self._logger = logger
+    def __init__(self, child_id: str, parent: EntityBase, /) -> None:
+        super().__init__(child_id, parent._broker, parent._logger)  # noqa: SLF001
 
         self._active_faults: _EvoListT = []
         self._last_logged: dict[str, dt] = {}
-
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}(id='{self._id}')"
 
     @property
     def active_faults(self) -> _EvoListT:
@@ -127,7 +131,7 @@ class _ZoneBaseDeprecated:  # pragma: no cover
         )
 
 
-class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
+class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsBase, EntityBase):
     """Provide the base for temperatureZone / domesticHotWater Zones."""
 
     STATUS_SCHEMA: Final[vol.Schema]  # type: ignore[misc]
@@ -136,7 +140,7 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
     SCH_SCHEDULE_PUT: Final[vol.Schema]  # type: ignore[misc]
 
     def __init__(self, child_id: str, tcs: System, config: _EvoDictT, /) -> None:
-        super().__init__(child_id, tcs._broker, tcs._logger)  # noqa: SLF001
+        super().__init__(child_id, tcs)
 
         self.tcs = tcs
 
@@ -152,7 +156,7 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
         """
 
         status: _EvoDictT = await self._broker.get(
-            f"{self.TYPE}/{self._id}/status", schema=self.STATUS_SCHEMA
+            f"{self.TYPE}/{self.id}/status", schema=self.STATUS_SCHEMA
         )  # type: ignore[assignment]
 
         self._update_status(status)
@@ -182,7 +186,7 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
 
         try:
             schedule: _EvoDictT = await self._broker.get(
-                f"{self.TYPE}/{self._id}/schedule", schema=self.SCH_SCHEDULE_GET
+                f"{self.TYPE}/{self.id}/schedule", schema=self.SCH_SCHEDULE_GET
             )  # type: ignore[assignment]
 
         except exc.RequestFailedError as err:
@@ -229,7 +233,7 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
         assert isinstance(schedule, dict)  # mypy check
 
         _ = await self._broker.put(
-            f"{self.TYPE}/{self._id}/schedule",
+            f"{self.TYPE}/{self.id}/schedule",
             json=schedule,
             schema=self.SCH_SCHEDULE_PUT,
         )
@@ -246,7 +250,7 @@ class _ZoneDeprecated:
         )
 
 
-class Zone(_ZoneDeprecated, _ZoneBase):
+class Zone(_ZoneDeprecated, _ZoneBase, EntityBase):
     """Instance of a TCS's heating zone (temperatureZone)."""
 
     STATUS_SCHEMA: Final = SCH_ZONE_STATUS  # type: ignore[misc]
@@ -278,7 +282,7 @@ class Zone(_ZoneDeprecated, _ZoneBase):
 
     @property
     def zone_id(self) -> _ZoneIdT:
-        return self._id
+        return self.id
 
     @property
     def model_type(self) -> str:
@@ -353,7 +357,7 @@ class Zone(_ZoneDeprecated, _ZoneBase):
     async def _set_mode(self, mode: dict[str, str | float]) -> None:
         """Set the zone mode (heat_setpoint, cooling is TBD)."""
         # TODO: also coolSetpoint
-        _ = await self._broker.put(f"{self.TYPE}/{self._id}/heatSetpoint", json=mode)
+        _ = await self._broker.put(f"{self.TYPE}/{self.id}/heatSetpoint", json=mode)
 
     async def reset_mode(self) -> None:
         """Cancel any override and allow the zone to follow its schedule"""

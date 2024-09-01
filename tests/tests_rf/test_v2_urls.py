@@ -149,10 +149,10 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
     _ = await tcs.location.refresh_status()  # could use: await tcs._refresh_status()
     old_mode: _EvoDictT = tcs.system_mode_status  # type: ignore[assignment]
 
-    url = f"{tcs.TYPE}/{tcs._id}/status"
+    url = f"{tcs.TYPE}/{tcs.id}/status"
     _ = await should_work(evo, HTTPMethod.GET, url, schema=SCH_TCS_STATUS)
 
-    url = f"{tcs.TYPE}/{tcs._id}/mode"
+    url = f"{tcs.TYPE}/{tcs.id}/mode"
     _ = await should_fail(
         evo, HTTPMethod.GET, url, status=HTTPStatus.METHOD_NOT_ALLOWED
     )
@@ -185,7 +185,7 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
         evo, HTTPMethod.PUT, url, json=old_mode, status=HTTPStatus.UNAUTHORIZED
     )
 
-    url = f"{tcs.TYPE}/{tcs._id}/systemMode"
+    url = f"{tcs.TYPE}/{tcs.id}/systemMode"
     _ = await should_fail(
         evo,
         HTTPMethod.PUT,
@@ -209,10 +209,10 @@ async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
     else:
         pytest.skip(ExitTestReason.NO_TESTABLE_ZONE)
 
-    url = f"{zone.TYPE}/{zone._id}/status"
+    url = f"{zone.TYPE}/{zone.id}/status"
     _ = await should_work(evo, HTTPMethod.GET, url, schema=SCH_ZONE_STATUS)
 
-    url = f"{zone.TYPE}/{zone._id}/heatSetpoint"
+    url = f"{zone.TYPE}/{zone.id}/heatSetpoint"
 
     heat_setpoint = {
         SZ_SETPOINT_MODE: ZoneMode.PERMANENT_OVERRIDE,
@@ -260,12 +260,12 @@ async def _test_schedule(evo: evo2.EvohomeClient) -> None:
     _ = await evo.installation()
     zone = evo.locations[0].gateways[0].systems[0].zones[0]
 
-    if zone._id == faked.GHOST_ZONE_ID:
+    if zone.id == faked.GHOST_ZONE_ID:
         url = f"{zone.TYPE}/{faked.GHOST_ZONE_ID}/schedule"
         _ = await should_fail(evo, HTTPMethod.GET, url, status=HTTPStatus.BAD_REQUEST)
         return
 
-    url = f"{zone.TYPE}/{zone._id}/schedule"
+    url = f"{zone.TYPE}/{zone.id}/schedule"
     schedule = await should_work(evo, HTTPMethod.GET, url, schema=SCH_GET_SCHEDULE)
 
     temp = schedule[SZ_DAILY_SCHEDULES][0][SZ_SWITCHPOINTS][0][SZ_HEAT_SETPOINT]  # type: ignore[call-overload]

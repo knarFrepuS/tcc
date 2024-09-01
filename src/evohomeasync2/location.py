@@ -21,13 +21,12 @@ from .schema.const import (
     SZ_TIME_ZONE,
     SZ_USE_DAYLIGHT_SAVE_SWITCHING,
 )
+from .zone import EntityBase
 
 if TYPE_CHECKING:
-    import logging
-
     import voluptuous as vol
 
-    from . import Broker, EvohomeClient
+    from . import EvohomeClient
     from .schema import _EvoDictT, _LocationIdT
 
 
@@ -40,19 +39,21 @@ class _LocationDeprecated:  # pragma: no cover
         )
 
 
-class Location(_LocationDeprecated):
+class Location(_LocationDeprecated, EntityBase):
     """Instance of an account's location."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_LOCN_STATUS
     TYPE: Final = SZ_LOCATION
 
     def __init__(self, client: EvohomeClient, config: _EvoDictT, /) -> None:
+        super().__init__(
+            config[SZ_LOCATION_INFO][SZ_LOCATION_ID],
+            client.broker,
+            client._logger,  # noqa: SLF001
+        )
+
+        # NOTE: locations don't appear to have active faults
         self.client = client
-
-        self._broker: Broker = client.broker
-        self._logger: logging.Logger = client._logger  # noqa: SLF001
-
-        self._id: Final[_LocationIdT] = config[SZ_LOCATION_INFO][SZ_LOCATION_ID]
 
         self._config: Final[_EvoDictT] = config[SZ_LOCATION_INFO]
         self._status: _EvoDictT = {}
@@ -67,12 +68,9 @@ class Location(_LocationDeprecated):
             self.gateways.append(gwy)
             self.gateway_by_id[gwy.gateway_id] = gwy
 
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}(id='{self._id}')"
-
     @property
     def location_id(self) -> _LocationIdT:
-        return self._id
+        return self.id
 
     @property
     def country(self) -> str:
@@ -108,7 +106,7 @@ class Location(_LocationDeprecated):
         """Update the entire Location with its latest status (returns the status)."""
 
         status: _EvoDictT = await self._broker.get(
-            f"{self.TYPE}/{self._id}/status?includeTemperatureControlSystems=True",
+            f"{self.TYPE}/{self.id}/status?includeTemperatureControlSystems=True",
             schema=self.STATUS_SCHEMA,
         )  # type: ignore[assignment]
 
