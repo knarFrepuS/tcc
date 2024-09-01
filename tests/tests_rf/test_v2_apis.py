@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 from datetime import datetime as dt
-from typing import TYPE_CHECKING
 
 import pytest
 
@@ -25,9 +24,6 @@ from . import faked_server as faked
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
 from .const import ExitTestReason
 from .helpers import instantiate_client_v2
-
-if TYPE_CHECKING:
-    from evohomeasync2.zone import Zone
 
 #######################################################################################
 
@@ -115,16 +111,14 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
         assert SCH_PUT_SCHEDULE_DHW(schedule)
         await dhw.set_schedule(schedule)
 
-    zone: Zone | None
-
     if (zone := evo.default_system().zones[0]) and zone._id != faked.GHOST_ZONE_ID:
         schedule = await zone.get_schedule()
         assert SCH_PUT_SCHEDULE_ZONE(schedule)
         await zone.set_schedule(schedule)
 
-    if zone := evo.default_system().zone_by_id.get(faked.GHOST_ZONE_ID):
+    if child := evo.default_system().zone_by_id.get(faked.GHOST_ZONE_ID):
         try:
-            schedule = await zone.get_schedule()
+            schedule = await child.get_schedule()
         except evo2.InvalidScheduleError:
             pass
         else:

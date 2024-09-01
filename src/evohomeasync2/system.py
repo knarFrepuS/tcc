@@ -133,7 +133,7 @@ class System(ActiveFaultsBase, _ControlSystemDeprecated):
         self._status: _EvoDictT = {}
 
         self.zones: list[Zone] = []
-        self.zone_by_id: dict[str, Zone] = {}
+        self.zone_by_id: dict[str, Zone | HotWater] = {}
         self.hotwater: None | HotWater = None
 
         zon_config: _EvoDictT
