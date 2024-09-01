@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     import pytest
 
-WORK_DIR = TEST_DIR / "systems_0"
+WORK_DIR = TEST_DIR / "fixtures"
 
 
 def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
