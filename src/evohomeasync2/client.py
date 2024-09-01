@@ -21,8 +21,8 @@ from . import HotWater, Zone, exceptions as exc
 from .base import EvohomeClient
 from .broker import AbstractTokenManager, _EvoTokenData
 from .const import SZ_NAME, SZ_SCHEDULE
-from .controlsystem import ControlSystem
 from .schema import SZ_ACCESS_TOKEN_EXPIRES
+from .system import System
 
 # all _DBG_* flags should be False for published code
 _DBG_DEBUG_CLI = False  # for debugging of click
@@ -80,13 +80,13 @@ def _check_positive_int(ctx: click.Context, param: click.Option, value: int) -> 
     return value
 
 
-def _get_tcs(evo: EvohomeClient, loc_idx: int | None) -> ControlSystem:
+def _get_tcs(evo: EvohomeClient, loc_idx: int | None) -> System:
     """Get the ControlSystem object for the specified location idx."""
 
     if loc_idx is None:
-        return evo._get_single_tcs()
+        return evo.default_system()
 
-    return evo.locations[int(loc_idx)]._gateways[0]._control_systems[0]
+    return evo.locations[loc_idx].gateways[0].systems[0]
 
 
 async def _write(filename: TextIOWrapper | Any, content: str) -> None:
@@ -300,8 +300,8 @@ async def get_schedule(
     print("\r\nclient.py: Starting backup of zone schedule (WIP)...")
     evo = ctx.obj[SZ_EVO]
 
-    zon: HotWater | Zone = _get_tcs(evo, loc_idx).zones_by_id[zone_id]
-    schedule = {zon._id: {SZ_NAME: zon.name, SZ_SCHEDULE: await zon.get_schedule()}}
+    zon: HotWater | Zone = _get_tcs(evo, loc_idx).zone_by_id[zone_id]
+    schedule = {zon._id: {SZ_NAME: zon.name, SZ_SCHEDULE: await zon.get_schedule()}}  # noqa: SLF001
 
     await _write(filename, json.dumps(schedule, indent=4) + "\r\n\r\n")
 

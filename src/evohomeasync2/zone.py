@@ -53,7 +53,7 @@ from .schema.const import (
 if TYPE_CHECKING:
     import logging
 
-    from . import Broker, ControlSystem
+    from . import Broker, System
     from .schema import _DhwIdT, _EvoDictT, _EvoListT, _ZoneIdT
 
 
@@ -135,8 +135,8 @@ class _ZoneBase(ActiveFaultsBase, _ZoneBaseDeprecated):
     SCH_SCHEDULE_GET: Final[vol.Schema]  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final[vol.Schema]  # type: ignore[misc]
 
-    def __init__(self, child_id: str, tcs: ControlSystem, config: _EvoDictT, /) -> None:
-        super().__init__(child_id, tcs._broker, tcs._logger)
+    def __init__(self, child_id: str, tcs: System, config: _EvoDictT, /) -> None:
+        super().__init__(child_id, tcs._broker, tcs._logger)  # noqa: SLF001
 
         self.tcs = tcs
 
@@ -255,7 +255,7 @@ class Zone(_ZoneDeprecated, _ZoneBase):
     SCH_SCHEDULE_GET: Final = SCH_GET_SCHEDULE_ZONE  # type: ignore[misc]
     SCH_SCHEDULE_PUT: Final = SCH_PUT_SCHEDULE_ZONE  # type: ignore[misc]
 
-    def __init__(self, tcs: ControlSystem, config: _EvoDictT, /) -> None:
+    def __init__(self, tcs: System, config: _EvoDictT, /) -> None:
         super().__init__(config[SZ_ZONE_ID], tcs, config)
 
         if not self.model_type or self.model_type == ZoneModelType.UNKNOWN:

@@ -10,7 +10,7 @@ from http import HTTPMethod, HTTPStatus
 import pytest
 
 import evohomeasync2 as evo2
-from evohomeasync2 import ControlSystem, Gateway, Location
+from evohomeasync2 import Gateway, Location, System
 from evohomeasync2.const import API_STRFTIME, DhwState, ZoneMode
 from evohomeasync2.schema.const import (
     SZ_MODE,
@@ -41,7 +41,7 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
 
     loc: Location
     gwy: Gateway
-    tcs: ControlSystem
+    tcs: System
 
     _ = await evo.user_account()
     _ = await evo._installation(refresh_status=False)
@@ -49,8 +49,8 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     dhw = None
 
     for loc in evo.locations:
-        for gwy in loc._gateways:
-            for tcs in gwy._control_systems:
+        for gwy in loc.gateways:
+            for tcs in gwy.systems:
                 if tcs.hotwater:
                     # if (dhw := tcs.hotwater) and dhw.temperatureStatus['isAvailable']:
                     dhw = tcs.hotwater

@@ -110,19 +110,19 @@ async def _test_sched__apis(evo: evo2.EvohomeClient) -> None:
 
     #
     # STEP 2: GET & PUT /{_type}/{_id}/schedule
-    if dhw := evo._get_single_tcs().hotwater:
+    if dhw := evo.default_system().hotwater:
         schedule = await dhw.get_schedule()
         assert SCH_PUT_SCHEDULE_DHW(schedule)
         await dhw.set_schedule(schedule)
 
     zone: Zone | None
 
-    if (zone := evo._get_single_tcs()._zones[0]) and zone._id != faked.GHOST_ZONE_ID:
+    if (zone := evo.default_system().zones[0]) and zone._id != faked.GHOST_ZONE_ID:
         schedule = await zone.get_schedule()
         assert SCH_PUT_SCHEDULE_ZONE(schedule)
         await zone.set_schedule(schedule)
 
-    if zone := evo._get_single_tcs().zones_by_id.get(faked.GHOST_ZONE_ID):
+    if zone := evo.default_system().zone_by_id.get(faked.GHOST_ZONE_ID):
         try:
             schedule = await zone.get_schedule()
         except evo2.InvalidScheduleError:
@@ -141,11 +141,11 @@ async def _test_status_apis(evo: evo2.EvohomeClient) -> None:
 
     #
     # STEP 2: GET /{_type}/{_id}/status
-    if dhw := evo._get_single_tcs().hotwater:
+    if dhw := evo.default_system().hotwater:
         dhw_status = await dhw._refresh_status()
         assert SCH_DHW_STATUS(dhw_status)
 
-    if zone := evo._get_single_tcs()._zones[0]:
+    if zone := evo.default_system().zones[0]:
         zone_status = await zone._refresh_status()
         assert SCH_ZONE_STATUS(zone_status)
 
@@ -161,9 +161,9 @@ async def _test_system_apis(evo: evo2.EvohomeClient) -> None:
     #
     # STEP 2: GET /{_type}/{_id}/status
     try:
-        tcs = evo._get_single_tcs()
+        tcs = evo.default_system()
     except evo2.NoSingleTcsError:
-        tcs = evo.locations[0].gateways[0].control_systems[0]
+        tcs = evo.locations[0].gateways[0].systems[0]
 
     mode = tcs.system_mode_status[SZ_MODE]
     assert mode in SYSTEM_MODES

@@ -50,22 +50,22 @@ class Location(_LocationDeprecated):
         self.client = client
 
         self._broker: Broker = client.broker
-        self._logger: logging.Logger = client._logger
+        self._logger: logging.Logger = client._logger  # noqa: SLF001
 
         self._id: Final[_LocationIdT] = config[SZ_LOCATION_INFO][SZ_LOCATION_ID]
 
         self._config: Final[_EvoDictT] = config[SZ_LOCATION_INFO]
         self._status: _EvoDictT = {}
 
-        self._gateways: list[Gateway] = []
-        self.gateways: dict[str, Gateway] = {}  # gwy by id
+        self.gateways: list[Gateway] = []
+        self.gateway_by_id: dict[str, Gateway] = {}
 
         gwy_config: _EvoDictT
         for gwy_config in config[SZ_GATEWAYS]:
             gwy = Gateway(self, gwy_config)
 
-            self._gateways.append(gwy)
-            self.gateways[gwy.gateway_id] = gwy
+            self.gateways.append(gwy)
+            self.gateway_by_id[gwy.gateway_id] = gwy
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}(id='{self._id}')"
@@ -121,8 +121,8 @@ class Location(_LocationDeprecated):
         self._status = status
 
         for gwy_status in self._status[SZ_GATEWAYS]:
-            if gwy := self.gateways.get(gwy_status[SZ_GATEWAY_ID]):
-                gwy._update_status(gwy_status)
+            if gwy := self.gateway_by_id.get(gwy_status[SZ_GATEWAY_ID]):
+                gwy._update_status(gwy_status)  # noqa: SLF001
 
             else:
                 self._logger.warning(

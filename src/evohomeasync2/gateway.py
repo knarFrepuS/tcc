@@ -5,7 +5,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Final
 
-from .controlsystem import ControlSystem
 from .schema import SCH_GWY_STATUS
 from .schema.const import (
     SZ_GATEWAY,
@@ -16,6 +15,7 @@ from .schema.const import (
     SZ_SYSTEM_ID,
     SZ_TEMPERATURE_CONTROL_SYSTEMS,
 )
+from .system import System
 from .zone import ActiveFaultsBase
 
 if TYPE_CHECKING:
@@ -33,7 +33,9 @@ class Gateway(ActiveFaultsBase):
 
     def __init__(self, location: Location, config: _EvoDictT, /) -> None:
         super().__init__(
-            config[SZ_GATEWAY_INFO][SZ_GATEWAY_ID], location._broker, location._logger
+            config[SZ_GATEWAY_INFO][SZ_GATEWAY_ID],
+            location._broker,  # noqa: SLF001
+            location._logger,  # noqa: SLF001
         )
 
         self.location = location
@@ -41,15 +43,15 @@ class Gateway(ActiveFaultsBase):
         self._config: Final[_EvoDictT] = config[SZ_GATEWAY_INFO]
         self._status: _EvoDictT = {}
 
-        self._control_systems: list[ControlSystem] = []
-        self.control_systems: dict[str, ControlSystem] = {}  # tcs by id
+        self.systems: list[System] = []
+        self.system_by_id: dict[str, System] = {}
 
         tcs_config: _EvoDictT
         for tcs_config in config[SZ_TEMPERATURE_CONTROL_SYSTEMS]:
-            tcs = ControlSystem(self, tcs_config)
+            tcs = System(self, tcs_config)
 
-            self._control_systems.append(tcs)
-            self.control_systems[tcs.system_id] = tcs
+            self.systems.append(tcs)
+            self.system_by_id[tcs.system_id] = tcs
 
     @property
     def gateway_id(self) -> _GatewayIdT:
@@ -71,8 +73,8 @@ class Gateway(ActiveFaultsBase):
         self._status = status
 
         for tcs_status in self._status[SZ_TEMPERATURE_CONTROL_SYSTEMS]:
-            if tcs := self.control_systems.get(tcs_status[SZ_SYSTEM_ID]):
-                tcs._update_status(tcs_status)
+            if tcs := self.system_by_id.get(tcs_status[SZ_SYSTEM_ID]):
+                tcs._update_status(tcs_status)  # noqa: SLF001
 
             else:
                 self._logger.warning(

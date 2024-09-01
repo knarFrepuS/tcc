@@ -49,14 +49,14 @@ async def test_system_snapshot(  # type: ignore[no-any-unimported]
     loc = evo.locations[0]
     snapshot.assert_match(yaml.dump(obj_to_dict(loc), indent=4), "location.yml")
 
-    gwy = loc._gateways[0]
+    gwy = loc.gateways[0]
     snapshot.assert_match(yaml.dump(obj_to_dict(gwy), indent=4), "gateway.yml")
 
-    tcs = gwy._control_systems[0]
+    tcs = gwy.systems[0]
     snapshot.assert_match(yaml.dump(obj_to_dict(tcs), indent=4), "control_system.yml")
 
     dhw = tcs.hotwater
     snapshot.assert_match(yaml.dump(obj_to_dict(dhw), indent=4), "hot_water.yml")
 
-    zones = {z.zone_id: obj_to_dict(z) for z in tcs._zones}
+    zones = {z.zone_id: obj_to_dict(z) for z in tcs.zones}
     snapshot.assert_match(yaml.dump(zones, indent=4), "zones.yml")

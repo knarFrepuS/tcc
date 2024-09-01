@@ -115,14 +115,14 @@ class _ControlSystemDeprecated:  # pragma: no cover
         )
 
 
-class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
+class System(ActiveFaultsBase, _ControlSystemDeprecated):
     """Instance of a gateway's TCS (temperatureControlSystem)."""
 
     STATUS_SCHEMA: Final[vol.Schema] = SCH_TCS_STATUS
     TYPE: Final = SZ_TEMPERATURE_CONTROL_SYSTEM  # type: ignore[misc]
 
     def __init__(self, gateway: Gateway, config: _EvoDictT, /) -> None:
-        super().__init__(config[SZ_SYSTEM_ID], gateway._broker, gateway._logger)
+        super().__init__(config[SZ_SYSTEM_ID], gateway._broker, gateway._logger)  # noqa: SLF001
 
         self.gateway = gateway
         self.location: Location = gateway.location
@@ -132,9 +132,8 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         }
         self._status: _EvoDictT = {}
 
-        self._zones: list[Zone] = []
-        self.zones: dict[str, Zone] = {}  # zone by name! what to do if name changed?
-        self.zones_by_id: dict[str, Zone] = {}
+        self.zones: list[Zone] = []
+        self.zone_by_id: dict[str, Zone] = {}
         self.hotwater: None | HotWater = None
 
         zon_config: _EvoDictT
@@ -146,13 +145,13 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
                     f"{self}: zone_id='{zon_config[SZ_ZONE_ID]}' ignored: {err}"
                 )
             else:
-                self._zones.append(zone)
-                self.zones[zone.name] = zone
-                self.zones_by_id[zone.zone_id] = zone
+                self.zones.append(zone)
+                self.zone_by_id[zone.zone_id] = zone
 
         dhw_config: _EvoDictT
         if dhw_config := config.get(SZ_DHW):  # type: ignore[assignment]
             self.hotwater = HotWater(self, dhw_config)
+            self.zone_by_id[self.hotwater.dhw_id] = self.hotwater
 
     @property
     def system_id(self) -> _SystemIdT:
@@ -178,8 +177,8 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
         self._status = status
 
         if dhw_status := self._status.get(SZ_DHW):
-            if self.hotwater and self.hotwater._id == dhw_status[SZ_DHW_ID]:
-                self.hotwater._update_status(dhw_status)
+            if self.hotwater and self.hotwater.dhw_id == dhw_status[SZ_DHW_ID]:
+                self.hotwater._update_status(dhw_status)  # noqa: SLF001
 
             else:
                 self._logger.warning(
@@ -188,8 +187,8 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
                 )
 
         for zon_status in self._status[SZ_ZONES]:
-            if zone := self.zones_by_id.get(zon_status[SZ_ZONE_ID]):
-                zone._update_status(zon_status)
+            if zone := self.zone_by_id.get(zon_status[SZ_ZONE_ID]):
+                zone._update_status(zon_status)  # noqa: SLF001
 
             else:
                 self._logger.warning(
@@ -207,6 +206,14 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
             return None
         ret: str = self.system_mode_status[SZ_MODE]
         return ret
+
+    def zone_by_name(self, name: str) -> Zone | None:
+        """Return a zone by name (zones can change names, but persist their id)."""
+
+        for zone in self.zones:
+            if zone.name == name:
+                return zone
+        return None
 
     async def _set_mode(self, mode: dict[str, str | bool]) -> None:
         """Set the TCS mode."""  # {'mode': 'Auto', 'isPermanent': True}
@@ -286,7 +293,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
             result.append(dhw_status)
 
-        for zone in self._zones:
+        for zone in self.zones:
             zone_status = {
                 SZ_THERMOSTAT: "EMEA_ZONE",
                 SZ_ID: zone.zone_id,
@@ -318,7 +325,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
                 return await child.get_schedule()
             except exc.InvalidScheduleError:
                 self._logger.warning(
-                    f"Ignoring schedule of {child._id} ({child.name}): missing/invalid"
+                    f"Ignoring schedule of {child._id} ({child.name}): missing/invalid"  # noqa: SLF001
                 )
             return {}
 
@@ -328,7 +335,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
 
         schedules = {}
 
-        for zone in self._zones:
+        for zone in self.zones:
             schedules[zone.zone_id] = {
                 SZ_NAME: zone.name,
                 SZ_SCHEDULE: await get_schedule(zone),
@@ -360,7 +367,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
             if self.hotwater and self.hotwater.dhw_id == child_id:
                 await self.hotwater.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
-            elif zone := self.zones_by_id.get(child_id):
+            elif zone := self.zone_by_id.get(child_id):
                 await zone.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
             else:
@@ -382,7 +389,7 @@ class ControlSystem(ActiveFaultsBase, _ControlSystemDeprecated):
             if self.hotwater and name == self.hotwater.name:
                 await self.hotwater.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
-            elif zone := self.zones.get(name):
+            elif zone := self.zone_by_name(name):
                 await zone.set_schedule(json.dumps(schedule[SZ_SCHEDULE]))
 
             else:

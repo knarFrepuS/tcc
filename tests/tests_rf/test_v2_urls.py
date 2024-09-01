@@ -141,9 +141,9 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
     _ = await evo.user_account()
     _ = await evo._installation(refresh_status=False)
 
-    tcs: evo2.ControlSystem
+    tcs: evo2.System
 
-    if not (tcs := evo.locations[0]._gateways[0]._control_systems[0]):
+    if not (tcs := evo.locations[0].gateways[0].systems[0]):
         pytest.skip(ExitTestReason.NO_TESTABLE_ZONE)
 
     _ = await tcs.location.refresh_status()  # could use: await tcs._refresh_status()
@@ -202,7 +202,7 @@ async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
     _ = await evo.user_account()
     _ = await evo._installation(refresh_status=False)
 
-    for zone in evo.locations[0]._gateways[0]._control_systems[0]._zones:
+    for zone in evo.locations[0].gateways[0].systems[0].zones:
         _ = await zone._refresh_status()
         if zone.temperature_status[SZ_IS_AVAILABLE]:
             break
@@ -258,7 +258,7 @@ async def _test_schedule(evo: evo2.EvohomeClient) -> None:
     _ = await evo.user_account()
 
     _ = await evo.installation()
-    zone = evo.locations[0]._gateways[0]._control_systems[0]._zones[0]
+    zone = evo.locations[0].gateways[0].systems[0].zones[0]
 
     if zone._id == faked.GHOST_ZONE_ID:
         url = f"{zone.TYPE}/{faked.GHOST_ZONE_ID}/schedule"

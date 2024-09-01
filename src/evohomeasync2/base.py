@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
     import aiohttp
 
-    from .controlsystem import ControlSystem
     from .schema import _EvoDictT, _EvoListT, _LocationIdT, _ScheduleT, _SystemIdT
+    from .system import System
 
 
 _LOGGER: Final = logging.getLogger(__name__.rpartition(".")[0])
@@ -245,7 +245,7 @@ class EvohomeClient(EvohomeClientDeprecated):
 
         return self._full_config  # type: ignore[return-value]
 
-    def _get_single_tcs(self) -> ControlSystem:
+    def default_system(self) -> System:
         """If there is a single location/gateway/TCS, return it, or raise an exception.
 
         Most users will have only one TCS.
@@ -256,58 +256,58 @@ class EvohomeClient(EvohomeClientDeprecated):
                 f"{self}: There is not a single location (only) for this account"
             )
 
-        if len(self.locations[0]._gateways) != 1:
+        if len(self.locations[0].gateways) != 1:
             raise exc.NoSingleTcsError(
                 f"{self}: There is not a single gateway (only) for this account/location"
             )
 
-        if len(self.locations[0]._gateways[0]._control_systems) != 1:
+        if len(self.locations[0].gateways[0].systems) != 1:
             raise exc.NoSingleTcsError(
                 f"{self}: There is not a single TCS (only) for this account/location/gateway"
             )
 
-        return self.locations[0]._gateways[0]._control_systems[0]
+        return self.locations[0].gateways[0].systems[0]
 
     @property
     def system_id(self) -> _SystemIdT:  # an evohome-client anachronism, deprecate?
         """Return the ID of the default TCS (assumes only one loc/gwy/TCS)."""
-        return self._get_single_tcs().system_id
+        return self.default_system().system_id
 
     async def reset_mode(self) -> None:
         """Reset the mode of the default TCS and its zones."""
-        await self._get_single_tcs().reset_mode()
+        await self.default_system().reset_mode()
 
     async def set_mode_auto(self) -> None:
         """Set the default TCS into auto mode."""
-        await self._get_single_tcs().set_auto()
+        await self.default_system().set_auto()
 
     async def set_mode_away(self, /, *, until: dt | None = None) -> None:
         """Set the default TCS into away mode."""
-        await self._get_single_tcs().set_away(until=until)
+        await self.default_system().set_away(until=until)
 
     async def set_mode_custom(self, /, *, until: dt | None = None) -> None:
         """Set the default TCS into custom mode."""
-        await self._get_single_tcs().set_custom(until=until)
+        await self.default_system().set_custom(until=until)
 
     async def set_mode_dayoff(self, /, *, until: dt | None = None) -> None:
         """Set the default TCS into day off mode."""
-        await self._get_single_tcs().set_dayoff(until=until)
+        await self.default_system().set_dayoff(until=until)
 
     async def set_mode_eco(self, /, *, until: dt | None = None) -> None:
         """Set the default TCS into eco mode."""
-        await self._get_single_tcs().set_eco(until=until)
+        await self.default_system().set_eco(until=until)
 
     async def set_mode_heatingoff(self, /, *, until: dt | None = None) -> None:
         """Set the default TCS into heating off mode."""
-        await self._get_single_tcs().set_heatingoff(until=until)
+        await self.default_system().set_heatingoff(until=until)
 
     async def temperatures(self) -> _EvoListT:
         """Return the current temperatures and setpoints of the default TCS."""
-        return await self._get_single_tcs().temperatures()
+        return await self.default_system().temperatures()
 
     async def get_schedules(self) -> _ScheduleT:
         """Backup all schedules from the default TCS."""
-        return await self._get_single_tcs().get_schedules()
+        return await self.default_system().get_schedules()
 
     async def set_schedules(
         self, schedules: _ScheduleT, *, match_by_name: bool = False
@@ -317,6 +317,6 @@ class EvohomeClient(EvohomeClientDeprecated):
         There is the option to match a schedule to its zone/dhw by name, rather than id.
         """
 
-        return await self._get_single_tcs().set_schedules(
+        return await self.default_system().set_schedules(
             schedules, match_by_name=match_by_name
         )
