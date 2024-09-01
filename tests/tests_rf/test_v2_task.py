@@ -200,4 +200,4 @@ async def _out_test_task_id(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

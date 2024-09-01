@@ -315,7 +315,7 @@ async def test_usr_account(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_all_config(
@@ -330,7 +330,7 @@ async def test_all_config(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_loc_status(
@@ -345,7 +345,7 @@ async def test_loc_status(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_tcs_mode(
@@ -360,7 +360,7 @@ async def test_tcs_mode(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
@@ -380,7 +380,7 @@ async def test_zone_mode(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
@@ -400,7 +400,7 @@ async def test_schedule(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 # TODO: test_oauth_token(

@@ -177,15 +177,9 @@ async def test_basics(
 ) -> None:
     """Test authentication, `user_account()` and `installation()`."""
 
-    try:
-        await _test_basics_apis(
-            await instantiate_client_v2(user_credentials, session, dont_login=True)
-        )
-
-    except ev2.AuthenticationFailedError as err:
-        if not _DBG_USE_REAL_AIOHTTP:
-            raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+    await _test_basics_apis(
+        await instantiate_client_v2(user_credentials, session, dont_login=True)
+    )
 
 
 async def test_sched_(
@@ -200,7 +194,7 @@ async def test_sched_(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_status(
@@ -215,7 +209,7 @@ async def test_status(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_system(
@@ -230,7 +224,7 @@ async def test_system(
     except ev2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
+        pytest.fail(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
