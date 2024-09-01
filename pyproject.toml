@@ -183,7 +183,7 @@
     "PGH",  #   pygrep hooks
     "PIE",  #   flake8-pie                       # desirable
     "PL",  #    pylint
-#   "PT",  #    flake8-pytest-style              # desirable
+    "PT",  #    flake8-pytest-style              # desirable
     "PTH",  #   flake8-use-pathlib               # desirable
     "PYI",  #   flake8-pyi
     "Q",  #     flake8-quotes

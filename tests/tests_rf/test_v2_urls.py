@@ -37,6 +37,7 @@ from evohomeasync2.schema.schedule import convert_to_put_schedule
 
 from . import faked_server as faked
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .const import ExitTestReason
 from .helpers import instantiate_client_v2, should_fail, should_work
 
 if TYPE_CHECKING:
@@ -143,7 +144,7 @@ async def _test_tcs_mode(evo: evo2.EvohomeClient) -> None:
     tcs: evo2.ControlSystem
 
     if not (tcs := evo.locations[0]._gateways[0]._control_systems[0]):
-        pytest.skip("No available zones found")
+        pytest.skip(ExitTestReason.NO_TESTABLE_ZONE)
 
     _ = await tcs.location.refresh_status()  # could use: await tcs._refresh_status()
     old_mode: _EvoDictT = tcs.system_mode_status  # type: ignore[assignment]
@@ -206,7 +207,7 @@ async def _test_zone_mode(evo: evo2.EvohomeClient) -> None:
         if zone.temperature_status[SZ_IS_AVAILABLE]:
             break
     else:
-        pytest.skip("No available zones found")
+        pytest.skip(ExitTestReason.NO_TESTABLE_ZONE)
 
     url = f"{zone.TYPE}/{zone._id}/status"
     _ = await should_work(evo, HTTPMethod.GET, url, schema=SCH_ZONE_STATUS)
@@ -311,10 +312,10 @@ async def test_usr_account(
     try:
         await _test_usr_account(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_all_config(
@@ -326,10 +327,10 @@ async def test_all_config(
     try:
         await _test_all_config(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_loc_status(
@@ -341,10 +342,10 @@ async def test_loc_status(
     try:
         await _test_loc_status(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 async def test_tcs_mode(
@@ -356,15 +357,15 @@ async def test_tcs_mode(
     try:
         await _test_tcs_mode(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Mocked server API not implemented")
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
 
 async def test_zone_mode(
@@ -376,15 +377,15 @@ async def test_zone_mode(
     try:
         await _test_zone_mode(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
     except NotImplementedError:  # TODO: implement
         if _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Mocked server API not implemented")
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
 
 async def test_schedule(
@@ -396,10 +397,10 @@ async def test_schedule(
     try:
         await _test_schedule(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
 
 
 # TODO: test_oauth_token(

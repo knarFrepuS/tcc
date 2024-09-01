@@ -4,8 +4,6 @@
 from __future__ import annotations
 
 import json
-import logging
-from datetime import datetime as dt
 from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Self
@@ -14,13 +12,15 @@ import aiohttp
 import pytest
 import pytest_asyncio
 
-from evohomeasync2.broker import AbstractTokenManager
 from evohomeasync2.schema import SCH_FULL_CONFIG, SCH_LOCN_STATUS, SCH_USER_ACCOUNT
+
+from .helpers import TokenManager
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Callable
 
     import voluptuous as vol
+
 
 type JsonValueType = (
     dict[str, JsonValueType] | list[JsonValueType] | str | int | float | bool | None
@@ -29,31 +29,6 @@ type JsonArrayType = list[JsonValueType]
 type JsonObjectType = dict[str, JsonValueType]
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
-
-_LOGGER = logging.getLogger(__name__)
-
-
-class ClientStub:
-    broker = None
-    _logger = _LOGGER
-
-
-class GatewayStub:
-    _broker = None
-    _logger = _LOGGER
-    location = None
-
-
-class TokenManager(AbstractTokenManager):
-    async def restore_access_token(self) -> None:
-        """Restore the access token from the cache."""
-
-        self.access_token = "access_token"  # noqa: S105
-        self.access_token_expires = dt.max
-        self.refresh_token = "refresh_token"  # noqa: S105
-
-    async def save_access_token(self) -> None:
-        """Save the access token to the cache."""
 
 
 @lru_cache

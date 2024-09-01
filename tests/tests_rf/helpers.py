@@ -100,9 +100,9 @@ async def should_fail_v1(  # noqa: PLR0913
         response.raise_for_status()
 
     except aiohttp.ClientResponseError as err:
-        assert err.status == status, err.status
-    else:
-        pytest.fail(f"response.status == {response.status}")
+        assert err.status == status, err.status  # noqa: PT017
+
+    assert status is None or response.status == status, response.status
 
     if _DBG_DISABLE_STRICT_ASSERTS:
         return None
@@ -223,9 +223,9 @@ async def should_fail(  # noqa: PLR0913
             )
 
     except aiohttp.ClientResponseError:
-        assert False  # err.status == status, err.status
-    else:
-        assert response.status == status, response.status
+        pytest.fail("Unexpected ClientResponseError")
+
+    assert status is None or response.status == status, response.status
 
     if _DBG_DISABLE_STRICT_ASSERTS:
         return None

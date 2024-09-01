@@ -8,6 +8,7 @@ import pytest
 import evohomeasync as evohome
 
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .const import ExitTestReason
 from .helpers import instantiate_client_v1
 
 
@@ -35,11 +36,11 @@ async def test_client_apis(
     """Test _populate_user_data() & _populate_full_data()"""
 
     if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip("Mocked server not implemented for this API")
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
     try:
         await _test_client_apis(
             await instantiate_client_v1(*user_credentials, session=session)
         )
-    except evohome.AuthenticationFailedError:
-        pytest.skip("Unable to authenticate")
+    except evohome.AuthenticationFailedError as err:
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")

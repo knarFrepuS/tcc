@@ -3,29 +3,28 @@
 
 from __future__ import annotations
 
-import json
 from typing import TYPE_CHECKING
 
-import pytest
-
-from evohomeasync2 import Location
-from evohomeasync2.schema import SCH_LOCN_STATUS
-from evohomeasync2.schema.config import SCH_TEMPERATURE_CONTROL_SYSTEM, SCH_TIME_ZONE
 from evohomeasync2.schema.const import (
     SZ_GATEWAY_ID,
     SZ_GATEWAY_INFO,
     SZ_GATEWAYS,
     SZ_LOCATION_ID,
     SZ_LOCATION_INFO,
-    SZ_TEMPERATURE_CONTROL_SYSTEMS,
-    SZ_TIME_ZONE,
 )
 
-from .helpers import TEST_DIR, ClientStub
+from .helpers import (
+    TEST_DIR,
+    fixture_file,
+    refresh_config_with_status,
+    validate_config_schema,
+    validate_status_schema,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
 
+    import pytest
 
 WORK_DIR = TEST_DIR / "schemas_0"
 
@@ -47,17 +46,8 @@ def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
 def test_config_refresh(folder: Path) -> None:
     """Test the loading a config, then an update_status() on top of that."""
 
-    if not (folder / CONFIG_FILE_NAME).is_file():
-        pytest.skip(f"No {CONFIG_FILE_NAME} in: {folder.name}")
-
-    if not (folder / STATUS_FILE_NAME).is_file():
-        pytest.skip(f"No {STATUS_FILE_NAME} in: {folder.name}")
-
-    with (folder / CONFIG_FILE_NAME).open() as f:
-        config: dict = json.load(f)
-
-    with (folder / STATUS_FILE_NAME).open() as f:
-        status: dict = json.load(f)
+    config = fixture_file(folder, CONFIG_FILE_NAME)
+    status = fixture_file(folder, STATUS_FILE_NAME)
 
     # hack because old JSON from HA's evohome integration didn't have location_id, etc.
     if not config[SZ_LOCATION_INFO].get(SZ_LOCATION_ID):
@@ -69,32 +59,16 @@ def test_config_refresh(folder: Path) -> None:
             SZ_GATEWAY_ID: status[SZ_GATEWAYS][0][SZ_GATEWAY_ID]
         }
 
-    loc = Location(ClientStub(), config)
-    loc._update_status(status)
+    refresh_config_with_status(config, status)
 
 
 def test_config_schemas(folder: Path) -> None:
     """Test the config schema for a location."""
 
-    if not (folder / CONFIG_FILE_NAME).is_file():
-        pytest.skip(f"No {CONFIG_FILE_NAME} in: {folder.name}")
-
-    with (folder / CONFIG_FILE_NAME).open() as f:
-        config: dict = json.load(f)
-
-    _ = SCH_TIME_ZONE(config[SZ_LOCATION_INFO][SZ_TIME_ZONE])
-    for gwy_config in config[SZ_GATEWAYS]:
-        for tcs_config in gwy_config[SZ_TEMPERATURE_CONTROL_SYSTEMS]:
-            _ = SCH_TEMPERATURE_CONTROL_SYSTEM(tcs_config)
+    validate_config_schema(fixture_file(folder, CONFIG_FILE_NAME))
 
 
 def test_status_schemas(folder: Path) -> None:
     """Test the status schema for a location."""
 
-    if not (folder / STATUS_FILE_NAME).is_file():
-        pytest.skip(f"No {STATUS_FILE_NAME} in: {folder.name}")
-
-    with (folder / STATUS_FILE_NAME).open() as f:
-        status: dict = json.load(f)
-
-    _ = SCH_LOCN_STATUS(status)
+    validate_status_schema(fixture_file(folder, STATUS_FILE_NAME))

@@ -22,6 +22,7 @@ from evohomeasync2.schema.const import (
 from evohomeasync2.schema.helpers import pascal_case
 
 from .conftest import _DBG_USE_REAL_AIOHTTP, aiohttp
+from .const import ExitTestReason
 from .helpers import (
     instantiate_client_v2,
     should_fail,
@@ -45,6 +46,8 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
     _ = await evo.user_account()
     _ = await evo._installation(refresh_status=False)
 
+    dhw = None
+
     for loc in evo.locations:
         for gwy in loc._gateways:
             for tcs in gwy._control_systems:
@@ -52,9 +55,8 @@ async def _test_task_id(evo: evo2.EvohomeClient) -> None:
                     # if (dhw := tcs.hotwater) and dhw.temperatureStatus['isAvailable']:
                     dhw = tcs.hotwater
                     break
-    # else:
-    #     pytest.skip("No available DHW found")
-    #
+    if dhw is None:
+        pytest.xfail(ExitTestReason.NO_TESTABLE_DHW)
 
     get_url = f"{dhw.TYPE}/{dhw._id}/status"
     put_url = f"{dhw.TYPE}/{dhw._id}/state"
@@ -188,12 +190,12 @@ async def test_task_id(
     """Test /location/{locationId}/status"""
 
     if not _DBG_USE_REAL_AIOHTTP:
-        pytest.skip("Test is only valid with a real server")
+        pytest.skip(ExitTestReason.NOT_IMPLEMENTED)
 
     try:
         await _test_task_id(await instantiate_client_v2(user_credentials, session))
 
-    except evo2.AuthenticationFailedError:
+    except evo2.AuthenticationFailedError as err:
         if not _DBG_USE_REAL_AIOHTTP:
             raise
-        pytest.skip("Unable to authenticate")
+        pytest.skip(ExitTestReason.AUTHENTICATE_FAIL + f": {err}")
