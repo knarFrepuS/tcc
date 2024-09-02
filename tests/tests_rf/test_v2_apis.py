@@ -181,9 +181,8 @@ async def test_basics(
 ) -> None:
     """Test authentication, `user_account()` and `installation()`."""
 
-    await _test_basics_apis(
-        await instantiate_client_v2(user_credentials, session, dont_login=True)
-    )
+    evo2 = await instantiate_client_v2(user_credentials, session, dont_login=True)
+    await _test_basics_apis(evo2)
 
 
 async def test_sched_(evo2: Awaitable[ev2.EvohomeClient]) -> None:

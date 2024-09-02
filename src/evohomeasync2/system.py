@@ -217,7 +217,7 @@ class System(_SystemDeprecated, ActiveFaultsMixin, EntityBase):
 
     async def _set_mode(self, mode: dict[str, str | bool]) -> None:
         """Set the TCS mode."""  # {'mode': 'Auto', 'isPermanent': True}
-        _ = await self._broker.put(f"{self.TYPE}/{self.id}/mode", json=mode)
+        await self._broker.put(f"{self.TYPE}/{self.id}/mode", json=mode)
 
     async def reset_mode(self) -> None:
         """Set the TCS to auto mode (and DHW/all zones to FollowSchedule mode)."""

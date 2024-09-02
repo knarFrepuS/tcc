@@ -331,7 +331,7 @@ class EvohomeClient(EvohomeClientDeprecated):
             data |= {SZ_QUICK_ACTION_NEXT_TIME: until.strftime("%Y-%m-%dT%H:%M:%SZ")}
 
         url = f"evoTouchSystems?locationId={self.location_id}"
-        await self.broker.make_request(HTTPMethod.PUT, url, data=data)
+        await self.broker.make_request(HTTPMethod.PUT, url, json=data)
 
     async def set_mode_auto(self) -> None:
         """Set the system to normal operation."""
@@ -416,7 +416,7 @@ class EvohomeClient(EvohomeClientDeprecated):
             }
 
         url = f"devices/{zone_id}/thermostat/changeableValues/heatSetpoint"
-        await self.broker.make_request(HTTPMethod.PUT, url, data=data)
+        await self.broker.make_request(HTTPMethod.PUT, url, json=data)
 
     async def set_temperature(
         self, zone: _ZoneIdT | _ZoneNameT, temperature: float, until: dt | None = None
@@ -474,7 +474,7 @@ class EvohomeClient(EvohomeClientDeprecated):
             data |= {SZ_NEXT_TIME: next_time.strftime("%Y-%m-%dT%H:%M:%SZ")}
 
         url = f"devices/{dhw_id}/thermostat/changeableValues"
-        await self.broker.make_request(HTTPMethod.PUT, url, data=data)
+        await self.broker.make_request(HTTPMethod.PUT, url, json=data)
 
     async def set_dhw_on(self, until: dt | None = None) -> None:
         """Set DHW to On, either indefinitely, or until a specified time.

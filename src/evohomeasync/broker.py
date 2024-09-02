@@ -88,7 +88,7 @@ class Broker:
         """Return the latest user data as retrieved from the web."""
 
         url = "session"
-        response = await self.make_request(HTTPMethod.POST, url, data=self._POST_DATA)
+        response = await self.make_request(HTTPMethod.POST, url, json=self._POST_DATA)
 
         self._user_data: _UserDataT = await response.json()
 
@@ -109,7 +109,7 @@ class Broker:
             await self.populate_user_data()
 
         url = f"locations?userId={self._user_id}&allData=True"
-        response = await self.make_request(HTTPMethod.GET, url, data=self._POST_DATA)
+        response = await self.make_request(HTTPMethod.GET, url, json=self._POST_DATA)
 
         self._full_data: list[_LocnDataT] = await response.json()
 
@@ -122,7 +122,7 @@ class Broker:
         url: str,
         /,
         *,
-        data: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
         _dont_reauthenticate: bool = False,  # used only with recursive call
     ) -> aiohttp.ClientResponse:
         """Perform an HTTP request, with an optional retry if re-authenticated."""
@@ -138,7 +138,7 @@ class Broker:
 
         url_ = self.hostname + "/WebAPI/api/" + url
 
-        async with func(url_, json=data, headers=self._headers) as r:
+        async with func(url_, json=json, headers=self._headers) as r:
             response_text = await r.text()  # why cant I move this below the if?
 
             # if 401/unauthorized, may need to refresh sessionId (expires in 15 mins?)
@@ -170,7 +170,7 @@ class Broker:
 
         # NOTE: this is a recursive call, used only after (success) re-authenticating
         return await self._make_request(
-            method, url, data=data, _dont_reauthenticate=True
+            method, url, json=json, _dont_reauthenticate=True
         )
 
     async def make_request(
@@ -179,12 +179,12 @@ class Broker:
         url: str,
         /,
         *,
-        data: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
     ) -> aiohttp.ClientResponse:
         """Perform an HTTP request, will authenticate if required."""
 
         try:
-            response = await self._make_request(method, url, data=data)  # ? ClientError
+            response = await self._make_request(method, url, json=json)  # ? ClientError
             response.raise_for_status()  # ? ClientResponseError
 
         # response.method, response.url, response.status, response._body

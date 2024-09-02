@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 import logging
+import re
 from abc import ABC, abstractmethod
 from datetime import datetime as dt, timedelta as td
 from http import HTTPMethod, HTTPStatus
-from typing import TYPE_CHECKING, Any, Final, TypedDict
+from typing import TYPE_CHECKING, Any, Final, TypedDict, TypeVar
 
 import aiohttp
 import voluptuous as vol
@@ -51,7 +52,7 @@ _ERR_MSG_LOOKUP_AUTH: dict[int, str] = _ERR_MSG_LOOKUP_BOTH | {  # POST OAUTH_UR
 }
 
 _ERR_MSG_LOOKUP_BASE: dict[int, str] = _ERR_MSG_LOOKUP_BOTH | {  # GET/PUT URL_BASE
-    HTTPStatus.BAD_REQUEST: "Bad request (invalid data/json?)",
+    HTTPStatus.BAD_REQUEST: "Bad request (invalid json?)",
     HTTPStatus.NOT_FOUND: "Not Found (invalid entity type?)",
     HTTPStatus.UNAUTHORIZED: "Unauthorized (expired access token/unknown entity id?)",
 }
@@ -188,7 +189,7 @@ class AbstractTokenManager(ABC):
 
         token_data = await self._post_access_token_request(
             AUTH_URL,
-            data=AUTH_PAYLOAD | credentials,
+            data=AUTH_PAYLOAD | credentials,  # NOTE: here, must be data=, not json=
             headers=AUTH_HEADER,
         )
 
@@ -344,3 +345,32 @@ class Broker:
         )
 
         return content
+
+
+T = TypeVar("T", dict[str, Any], list[Any], dict[str, Any] | list[Any])
+
+
+def convert_json(node: T) -> T:
+    """Convert all the strings in a JSON object from camelCase to snake_case."""
+
+    return node
+
+    def camel_to_snake(value: str, /) -> str:
+        """Convert a camelCase / PascalCase string to snake_case."""
+
+        s = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", value)
+        return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s).lower()
+
+    if isinstance(node, str):
+        return camel_to_snake(node)
+
+    if isinstance(node, list):
+        return [convert_json(i) for i in node]
+
+    if not isinstance(node, dict):
+        return node
+
+    return {
+        camel_to_snake(k) if isinstance(k, str) else k: convert_json(v)
+        for k, v in node.items()
+    }

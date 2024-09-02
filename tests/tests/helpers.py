@@ -67,9 +67,7 @@ def fixture_file(folder: Path, file_name: str, /) -> dict:
         pytest.skip(f"Fixture {file_name} not found in {folder.name}")
 
     with (folder / file_name).open() as f:
-        data: dict = json.load(f)
-
-    return data
+        return json.load(f)  # type: ignore[no-any-return]
 
 
 def refresh_config_with_status(config: dict, status: dict) -> None:

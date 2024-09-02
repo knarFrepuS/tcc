@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Final, NoReturn
 import voluptuous as vol
 
 from . import exceptions as exc
+from .broker import convert_json
 from .const import API_STRFTIME, ZoneMode
 from .schema import (
     SCH_GET_SCHEDULE_ZONE,
@@ -154,9 +155,10 @@ class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
         with a single GET.
         """
 
-        status: _EvoDictT = await self._broker.get(
-            f"{self.TYPE}/{self.id}/status", schema=self.STATUS_SCHEMA
-        )  # type: ignore[assignment]
+        url = f"{self.TYPE}/{self.id}/status"
+
+        result = await self._broker.get(url, schema=self.STATUS_SCHEMA)  # XXX
+        status: _EvoDictT = convert_json(result)  # type: ignore[arg-type]
 
         self._update_status(status)
         return status
@@ -182,10 +184,10 @@ class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
 
         self._logger.debug(f"{self}: Getting schedule...")
 
+        url = f"{self.TYPE}/{self.id}/schedule"
+
         try:
-            schedule: _EvoDictT = await self._broker.get(
-                f"{self.TYPE}/{self.id}/schedule", schema=self.SCH_SCHEDULE_GET
-            )  # type: ignore[assignment]
+            result = await self._broker.get(url, schema=self.SCH_SCHEDULE_GET)  # XXX
 
         except exc.RequestFailedError as err:
             if err.status == HTTPStatus.BAD_REQUEST:
@@ -199,7 +201,8 @@ class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
                 f"{self}: No Schedule / Schedule is invalid"
             ) from err
 
-        self._schedule = convert_to_put_schedule(schedule)
+        # TODO: convert_json()
+        self._schedule = convert_to_put_schedule(result)  # type: ignore[arg-type]
         return self._schedule
 
     async def set_schedule(self, schedule: _EvoDictT | str) -> None:
@@ -228,7 +231,7 @@ class _ZoneBase(_ZoneBaseDeprecated, ActiveFaultsMixin, EntityBase):
                 f"{self}: Invalid schedule type: {type(schedule)}"
             )
 
-        _ = await self._broker.put(
+        await self._broker.put(
             f"{self.TYPE}/{self.id}/schedule",
             json=schedule,
             schema=self.SCH_SCHEDULE_PUT,
@@ -347,9 +350,8 @@ class Zone(_ZoneDeprecated, _ZoneBase, EntityBase):
 
     # TODO: no provision for cooling
     async def _set_mode(self, mode: dict[str, str | float]) -> None:
-        """Set the zone mode (heat_setpoint, cooling is TBD)."""
-        # TODO: also coolSetpoint
-        _ = await self._broker.put(f"{self.TYPE}/{self.id}/heatSetpoint", json=mode)
+        """Set the zone mode (heat_setpoint, cooling is TBD)."""  # TODO: coolSetpoint
+        await self._broker.put(f"{self.TYPE}/{self.id}/heatSetpoint", json=mode)
 
     async def reset_mode(self) -> None:
         """Cancel any override and allow the zone to follow its schedule"""

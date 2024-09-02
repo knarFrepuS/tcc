@@ -5,6 +5,9 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
+from evohomeasync2.broker import convert_json
 from evohomeasync2.schema.helpers import camel_case, pascal_case
 from evohomeasync2.schema.schedule import (
     SCH_GET_SCHEDULE_DHW,
@@ -48,7 +51,7 @@ def test_get_schedule_dhw() -> None:
     assert get_schedule == convert_to_get_schedule(put_schedule)
 
 
-def test_helper_function() -> None:
+def test_case_converters() -> None:
     """Test helper functions."""
 
     camel_case_str = "testString"
@@ -61,3 +64,11 @@ def test_helper_function() -> None:
 
     assert camel_case(pascal_case(camel_case_str)) == camel_case_str
     assert pascal_case(camel_case(pascal_case_str)) == pascal_case_str
+
+
+@pytest.mark.skip("This is a WIP")
+def test_json_snakator() -> None:
+    """Confirm the recursive snake_case converter works as expected."""
+
+    assert convert_json({"UpperCase": "lowerCase"}) == {"upper_case": "lower_case"}
+    assert convert_json({"UpperCase": ["lowerCase"]}) == {"upper_case": ["lower_case"]}

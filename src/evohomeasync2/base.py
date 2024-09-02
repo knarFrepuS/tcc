@@ -8,9 +8,10 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 from . import exceptions as exc
-from .broker import AbstractTokenManager, Broker
+from .broker import AbstractTokenManager, Broker, convert_json
 from .location import Location
 from .schema import SCH_FULL_CONFIG, SCH_USER_ACCOUNT
+from .schema.const import SZ_USER_ID
 
 if TYPE_CHECKING:
     from datetime import datetime as dt
@@ -191,9 +192,8 @@ class EvohomeClient(EvohomeClientDeprecated):
         if self._user_account and not force_update:
             return self._user_account
 
-        self._user_account: _EvoDictT = await self.broker.get(
-            "userAccount", schema=SCH_USER_ACCOUNT
-        )  # type: ignore[assignment]
+        result = await self.broker.get("userAccount", schema=SCH_USER_ACCOUNT)
+        self._user_account: _EvoDictT = convert_json(result)  # type: ignore[assignment]
 
         return self._user_account  # type: ignore[return-value]
 
@@ -228,10 +228,11 @@ class EvohomeClient(EvohomeClientDeprecated):
         # FIXME: shouldn't really be starting again with new objects?
         self.locations = []  # for now, need to clear this before GET
 
-        url = f"location/installationInfo?userId={self.account_info['userId']}"
+        url = f"location/installationInfo?userId={self.account_info[SZ_USER_ID]}"
         url += "&includeTemperatureControlSystems=True"
 
-        self._full_config = await self.broker.get(url, schema=SCH_FULL_CONFIG)  # type: ignore[assignment]
+        result = await self.broker.get(url, schema=SCH_FULL_CONFIG)
+        self._full_config: _EvoDictT = convert_json(result)  # type: ignore[assignment]
 
         # populate each freshly instantiated location with its initial status
         loc_config: _EvoDictT

@@ -113,7 +113,7 @@ class HotWater(_HotWaterDeprecated, _ZoneBase, EntityBase):
 
     async def _set_mode(self, mode: dict[str, str | None]) -> None:
         """Set the DHW mode (state)."""
-        _ = await self._broker.put(f"{self.TYPE}/{self.id}/state", json=mode)
+        await self._broker.put(f"{self.TYPE}/{self.id}/state", json=mode)
 
     async def reset_mode(self) -> None:
         """Cancel any override and allow the DHW to follow its schedule."""

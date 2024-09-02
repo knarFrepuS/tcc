@@ -7,6 +7,7 @@ from datetime import timedelta as td, timezone
 from typing import TYPE_CHECKING, Any, Final, NoReturn
 
 from . import exceptions as exc
+from .broker import convert_json
 from .gateway import Gateway
 from .schema import SCH_LOCN_STATUS
 from .schema.const import (
@@ -110,10 +111,10 @@ class Location(_LocationDeprecated, EntityBase):
     async def refresh_status(self) -> _EvoDictT:
         """Update the entire Location with its latest status (returns the status)."""
 
-        status: _EvoDictT = await self._broker.get(
-            f"{self.TYPE}/{self.id}/status?includeTemperatureControlSystems=True",
-            schema=self.STATUS_SCHEMA,
-        )  # type: ignore[assignment]
+        url = f"{self.TYPE}/{self.id}/status?includeTemperatureControlSystems=True"
+
+        result = await self._broker.get(url, schema=self.STATUS_SCHEMA)
+        status: _EvoDictT = convert_json(result)  # type: ignore[arg-type]
 
         self._update_status(status)
         return status
