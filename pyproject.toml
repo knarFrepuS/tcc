@@ -155,29 +155,36 @@
 
 [tool.ruff.lint]
   select = [
-    "A",    #   flake8-builtins
+    "A",    #   flake8-builtins                  # desirable
     "ANN",  #   flake8-annotations
 #   "ARG",  #   flake8-unused-arguments
-    "ASYNC",  # flake8-async
+    "ASYNC",  # flake8-async                     # desirable
     "B",  #     flake8-bugbear                   # desirable
     "BLE",  #   blind-except
     "C",  #     convention                       # desirable
-    "C4",  #    flake8-comprehensions
-    "C90",  #   mcabe
     "COM",  #   flake8-commas
+    "CPY",  #   flake8-copyright
+    "C4",  #    flake8-comprehensions
+    "C90",  #   mccabe
 #   "D",  #     pydocstyle                       # a big job
+#   "DOC",  #   pydoclint
     "DTZ",  #   flake8-datetimez                 # desirable
     "E",  #     pycodestyle
     "EM",  #    flake8-errmsg
+#   "ERA",  #   eradicate
     "EXE",  #   flake8-executable
     "F",  #     Pyflakes
     "FA",  #    flake8-future-annotations
     "FBT",  #   flake8-boolean-trap              # desirable
+#   "FIX",  #   flake8-fixme
+    "FLY",  #   flynt
     "FURB",  #  refurb
     "G",  #     flake8-logging-format
     "I",  #     isort
     "ICN",  #   flake8-import-conventions        # desirable
     "INP",  #   flake8-no-pep420
+    "INT",  #   flake8-gettext
+    "ISC",  #   flake8-implicit-str-concat
     "LOG",  #   flake8-logging
     "N",  #     pep8-naming                      # desirable
     "PERF",  #  perflint
@@ -196,8 +203,11 @@
     "SLF",  #   flake8-self
     "SLOT",  #  flake8-slot
     "TCH",  #   flake8-type-checking             # desirable
+#   "TD",  #    flake8-todos
     "TID",  #   flake8-tidy-imports
-    "UP",  #    pyupgrade
+    "T10",  #   flake8-debugger
+    "T20",  #   flake8-print
+    "UP",  #    pyupgrade                        # desirable
     "W",  #     pycodestyle
     "YTT",  #   flake8-2020
   ]
@@ -217,7 +227,8 @@
 
 
 [tool.ruff.lint.per-file-ignores]
-  "tests/*" = ["SLF", "S101"]
+  "tests/*" = ["ERA001", "SLF", "S101"]
+  "client.py" = ["T100", "T201"]
 
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
